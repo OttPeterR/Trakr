@@ -15,7 +15,7 @@ def getMACs(pathToPcap):
 
 
 def test():
-    getMACs("/Users/pott/Desktop/one.pcap")
+    getMACs("/Users/pott/Desktop/few.pcap")
 
 
 if __name__ == '__main__':
