@@ -14,7 +14,7 @@ def createDefaultConfig():
     #database section
     config.add_section("db")
     config.set("db", "rolling_path", (fullPath + "/db/rolling.db"))
-    config.set("db", "reduced_path", (fullPath + "/db/reduced.db"))
+    config.set("db", "behavior_path", (fullPath + "/db/behavior.db"))
     config.set("db", "graph_path", (fullPath + "/db/graph.db"))
 
     #monitoring section

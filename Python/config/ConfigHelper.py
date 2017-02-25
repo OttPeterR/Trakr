@@ -69,8 +69,8 @@ def getWirelessCaptureInterface():
     def getRollingDatabasePath(self):
         return configParser.get("db", "rolling_path")
 
-    def getReducedDatabasePath(self):
-        return configParser.get("db", "reduced_path")
+    def getBehaviorDatabasePath(self):
+        return configParser.get("db", "behavior_path")
 
     def getGraphDatabasePath(self):
         return configParser.get("db", "graph_path")
