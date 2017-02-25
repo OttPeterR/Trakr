@@ -31,7 +31,3 @@ def createDefaultConfig():
 
 def getFullTrakrPath():
     return os.getcwd()[:-7]
-
-
-
-createDefaultConfig()
