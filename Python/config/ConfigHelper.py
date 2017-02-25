@@ -11,7 +11,6 @@ class ConfigHelper():
 
     loaded = False
     configParser = ConfigParser.ConfigParser()
-    defaultConfigPath = "./trakr.ini"
 
     #loads up the config file, or a default if its missing
     def startUp(self):
@@ -26,10 +25,9 @@ class ConfigHelper():
 
     def reloadConfig(self):
         global configParser
-        global defaultConfigPath
 
         # check if config is missing
-        if not os.path.exists(defaultConfigPath):
+        if not os.path.exists(DefaultLoader.defaultConfigPath):
             # create it if needed
             DefaultLoader.createDefaultConfig()
 
@@ -40,15 +38,15 @@ class ConfigHelper():
     #given the path to the config, load it
     def loadConfig(self):
         global configParser
-        global defaultConfigPath
         global loaded
 
-        configParser.read(defaultConfigPath)
+        configParser.read(DefaultLoader.defaultConfigPath)
         loaded = True
         return
 
-
-
+    def resetConfig(self):
+        DefaultLoader.createDefaultConfig()
+        loaded = True
 
 
 ######################################
