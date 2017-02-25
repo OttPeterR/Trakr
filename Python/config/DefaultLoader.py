@@ -9,25 +9,22 @@ def createDefaultConfig():
     file = open(defaultConfigPath, 'w')
     config = ConfigParser.ConfigParser()
 
+    fullPath = str(getFullTrakrPath())
+
     #database section
     config.add_section("db")
-    config.set("db", "rolling_path", (str(getFullTrakrPath()))+"/db/rolling.db")
-    config.set("db", "reduced_path", (str(getFullTrakrPath()))+"/db/reduced.db")
-    config.set("db", "graph_path", (str(getFullTrakrPath()))+"/db/graph.db")
-
-
-
+    config.set("db", "rolling_path", (fullPath + "/db/rolling.db"))
+    config.set("db", "reduced_path", (fullPath + "/db/reduced.db"))
+    config.set("db", "graph_path", (fullPath + "/db/graph.db"))
 
     #monitoring section
     config.add_section("scanner")
     config.set("scanner","observation_interval_seconds", 600)
 
-
-    print getFullTrakrPath()
-
     config.write(file)
+    print "Default config created."
 
 
 
 def getFullTrakrPath():
-    return os.getcwd()[:-7]
+    return os.path.dirname(os.path.abspath(__file__))[:-7]
