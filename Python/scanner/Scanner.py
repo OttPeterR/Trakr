@@ -1,3 +1,7 @@
+import thread
+from scanner import ScannerThread
+
+
 def beginScan():
-    print "Scanning..."
-    return
+    thread.start_new(ScannerThread.scan())
+
