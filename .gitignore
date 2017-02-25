@@ -14,3 +14,5 @@ Python/.idea
 Python/config/trakr.ini
 
 *.pyc
+
+*.ini
