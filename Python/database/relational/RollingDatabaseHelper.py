@@ -22,4 +22,6 @@ def rollingDatabaseInit():
     conn.execute('''CREATE TABLE ROLLING
            (ID INT PRIMARY KEY     NOT NULL,
            ADDRESS         TEXT    NOT NULL,
-           TIME            INT     NOT NULL);''')
+           TIME            INT     NOT NULL,
+           LAT             DOUBLE  NOT NULL,
+           LONG            DOUBLE  NOT NULL);''')
