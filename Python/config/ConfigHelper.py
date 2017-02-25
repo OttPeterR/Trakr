@@ -2,7 +2,9 @@ import ConfigParser
 import DefaultLoader
 import os
 
+
 class ConfigHelper():
+    #TODO make this a singleton
     global loaded
     global configParser
     global defaultConfigPath
@@ -39,6 +41,7 @@ class ConfigHelper():
     def loadConfig(self):
         global configParser
         global defaultConfigPath
+        global loaded
 
         configParser.read(defaultConfigPath)
         loaded = True
@@ -60,3 +63,6 @@ class ConfigHelper():
 
     def getGraphDatabasePath(self):
         return configParser.get("db", "graph_path")
+
+    def autoStart(self):
+        return configParser.getboolean("scanner", "autostart")
