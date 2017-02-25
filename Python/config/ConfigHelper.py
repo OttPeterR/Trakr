@@ -44,8 +44,8 @@ def __loadConfig(path):
 ######################################
 
 @staticmethod
-def getComprehensiveDatabasePath():
-    return config.get("db", "comprehensive_path")
+def getRollingDatabasePath():
+    return config.get("db", "rolling_path")
 
 @staticmethod
 def getReducedDatabasePath():
