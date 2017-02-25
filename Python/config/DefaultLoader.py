@@ -19,6 +19,7 @@ def createDefaultConfig():
 
     #monitoring section
     config.add_section("scanner")
+    config.set("scanner", "interface", "en0")
     config.set("scanner", "autostart", False)
     config.set("scanner","observation_interval_seconds", 600)
 

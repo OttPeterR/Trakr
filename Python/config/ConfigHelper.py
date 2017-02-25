@@ -53,6 +53,19 @@ class ConfigHelper():
 ########### access methods ###########
 ######################################
 
+    #application
+
+    def autoStart(self):
+        return configParser.getboolean("scanner", "autostart")
+
+
+    #scanner
+
+def getWirelessCaptureInterface():
+    return configParser.get("scanner", "interface")
+
+    #database
+
     def getRollingDatabasePath(self):
         return configParser.get("db", "rolling_path")
 
@@ -62,5 +75,3 @@ class ConfigHelper():
     def getGraphDatabasePath(self):
         return configParser.get("db", "graph_path")
 
-    def autoStart(self):
-        return configParser.getboolean("scanner", "autostart")
