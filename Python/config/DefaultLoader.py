@@ -35,7 +35,7 @@ def createDefaultConfig():
 
 
     config.write(file)
-    print "Default config created."
+    print "Default config written."
 
 
 
