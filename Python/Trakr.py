@@ -1,6 +1,8 @@
 from config import ConfigHelper
 from scanner import Scanner
+from database import DatabaseExporter
 import cli.app
+import argparse
 
 
 @cli.app.CommandLineApp
@@ -11,15 +13,41 @@ def TRAKr(app):
     configHelper = ConfigHelper.ConfigHelper()
     configHelper.startUp()
 
+    ###########
+    ### handling pre-run parameters first
+    ###########
+    if TRAKr.params.reset:
+        ConfigHelper.ConfigHelper().resetConfig()
+
+    if TRAKr.params.export:
+        DatabaseExporter.exportDatabases()
+
+    ###########
+    ### handling run parameters
+    ###########
+    if TRAKr.params.scan:
+        Scanner.beginScan()
 
     print("[TRAKr] - Shutting Down")
 
-#ls.add_param("-l", "--long", help="list in long format", default=False, action="store_true")
-TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database")
+
+class ExportDatabase(argparse.Action):
+    # TODO take in a path for export location
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        if nargs is not None:
+            raise ValueError("nargs not allowed")
+        super(ExportDatabase, self).__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        print "exporting..."
 
 
-
-
+# actions happen before TRAKr starts, so only use this for resetting config and exporting kinda stuff
+# for operational things, use a parameter that gets set
+TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
+TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
+TRAKr.add_param("-export", "--export", help="this exports the graph.db and reduced.db into the /export dir",
+                action='store_true', default=False)
 
 if __name__ == '__main__':
     TRAKr.run()
