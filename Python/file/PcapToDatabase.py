@@ -1,6 +1,6 @@
 #move data from pcap files into the first stage of databases
 from scapy.all import rdpcap
-from database.relational import ComprehensiveDatabaseHelper
+from database.relational import RollingDatabaseHelper
 import PacketExtractor
 
 
@@ -10,7 +10,7 @@ def loadPcap(pathToPcap):
     packets = rdpcap(pathToPcap)
 
 
-    dbHelper = ComprehensiveDatabaseHelper.ComprehensiveDatabaseHelper()
+    dbHelper = RollingDatabaseHelper.ComprehensiveDatabaseHelper()
     info = []
     #loop through packets, extract info, throw into database
     for p in packets:
