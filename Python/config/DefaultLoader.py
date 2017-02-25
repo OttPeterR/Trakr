@@ -25,7 +25,7 @@ def createDefaultConfig():
 
     #analysis section
     config.add_section("analysis")
-    config.set("analysis", "exit_seconds", 600)
+    config.set("analysis", "exit_seconds", 1800) # 30 minutes
     config.set("analysis", "enter_period_seconds", 180)
 
     # enter_period_second will be divided into enter_subperiod groups
