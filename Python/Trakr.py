@@ -1,9 +1,10 @@
+import cli.app
+import argparse
+import os
+
 from config import ConfigHelper
 from scanner import Scanner
 from database import DatabaseExporter
-import cli.app
-import argparse
-
 
 @cli.app.CommandLineApp
 def TRAKr(app):
@@ -26,7 +27,13 @@ def TRAKr(app):
     ### handling run parameters
     ###########
     if TRAKr.params.scan:
-        Scanner.beginScan()
+        #root check, cuz that's needed
+        if os.geteuid() == 0:
+            Scanner.beginScan()
+        else:
+            #too bad
+            print "Please run as root to capture packets. Exiting..."
+            os._exit(0)
 
     print("[TRAKr] - Shutting Down")
 
