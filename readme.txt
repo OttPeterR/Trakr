@@ -4,4 +4,5 @@ python 2.7
 scapy
 pcapy
 libdnet
+pyCLI
 libpcap (I think)
