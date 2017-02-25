@@ -10,3 +10,5 @@ Java/.idea
 Python/.idea
 
 *.swp
+
+Python/config/trakr.ini
