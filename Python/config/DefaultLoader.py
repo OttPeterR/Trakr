@@ -22,6 +22,18 @@ def createDefaultConfig():
     config.set("scanner", "autostart", False)
     config.set("scanner","observation_interval_seconds", 600)
 
+    #analysis section
+    config.add_section("analysis")
+    config.set("analysis", "exit_seconds", 600)
+    config.set("analysis", "enter_period_seconds", 180)
+
+    # enter_period_second will be divided into enter_subperiod groups
+    # and there must be at least one wifi observation in each of those
+    # groups to then assume the person has entered and is not just passing by
+    config.set("analysis", "enter_subperiods", 4)
+
+
+
     config.write(file)
     print "Default config created."
 
