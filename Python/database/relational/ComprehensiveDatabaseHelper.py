@@ -1,4 +1,4 @@
-import config.ConfigHelper
+from config import ConfigHelper
 
 class ComprehensiveDatabaseHelper():
     path = ConfigHelper.ConfigHelper()
