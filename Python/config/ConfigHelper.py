@@ -4,7 +4,6 @@ import os
 
 
 class ConfigHelper():
-    #TODO make this a singleton
     global loaded
     global configParser
     global defaultConfigPath
