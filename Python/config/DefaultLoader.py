@@ -17,21 +17,22 @@ def createDefaultConfig():
     config.set("trakr", "autostart", False)
 
 
-    #database section
+    # database section
     config.add_section("db")
     config.set("db", "rolling_path", (fullPath + "/db/rolling.db"))
     config.set("db", "behavior_path", (fullPath + "/db/behavior.db"))
     config.set("db", "graph_path", (fullPath + "/db/graph.db"))
 
-    #monitoring section
+    # scanner section
     config.add_section("scanner")
     # TODO
     # find a way to check the OS and then get the default interface
     # because this works for MacOS only
     config.set("scanner", "interface", "en0")
     config.set("scanner","duration", 60*10) #scan for 10 minutes
+    config.set("scanner", "capture_dir", fullPath+"/runtime/pcap/")
 
-    #analysis section
+    # analysis section
     config.add_section("analysis")
     config.set("analysis", "exit_seconds", 60*30) # 30 minutes
     config.set("analysis", "enter_period_seconds", 60*3) # 3 minutes

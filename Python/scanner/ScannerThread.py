@@ -19,8 +19,7 @@ def scan():
     captureInterface = str(ConfigHelper.getWirelessCaptureInterface())
     captureDuration = str(ConfigHelper.getCaptureDuration())
 
-    captureDirectory = str(ConfigHelper.getTRAKrFullPath())
-    capturePath = captureDirectory + "/runtime/pcap/" + \
+    capturePath = str(ConfigHelper.getCaptureDirectory())+ \
                   ThreadKeeper.getTimeStamp() + \
                   "-unprocessed.pcap"
 
