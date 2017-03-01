@@ -1,5 +1,5 @@
 from scapy.all import *
-
+from subprocess import call
 
 import ThreadKeeper
 import Observation
@@ -9,6 +9,7 @@ def extract(filePath):
     ThreadKeeper.incrementThreadCount()
 
     packets = rdpcap(filePath)
+    __renamePcap(filePath)
     observations = []
     for packet in packets:
         observations += [Observation.makeObservation(packet)]
@@ -34,3 +35,8 @@ def getUniqueMACs(observations):
 
     print "unique: " + str(len(dict))
     return dict
+
+def __renamePcap(filePath):
+    if filePath.endswith("-unprocessed.pcap"):
+        newFilePath = filePath[:-17]+".pcap"
+        call(["mv", filePath, newFilePath])
