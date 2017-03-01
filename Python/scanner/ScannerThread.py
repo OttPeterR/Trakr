@@ -3,7 +3,15 @@ from config import ConfigHelper
 from subprocess import call
 import ThreadKeeper
 
+
+
+def scanLoop():
+    while True:
+        scan()
+
+
 def scan():
+
     ThreadKeeper.incrementThreadCount()
 
     captureInterface = str(ConfigHelper.getWirelessCaptureInterface())
