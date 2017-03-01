@@ -1,13 +1,15 @@
 #from scapy.all import sniff
 from config import ConfigHelper
 from subprocess import call
+from file import Extractor
 import ThreadKeeper
 
 
 
 def scanLoop():
     while True:
-        scan()
+        pcapPath = scan()
+        Extractor.ExtractFromFile(pcapPath)
 
 
 def scan():
@@ -23,6 +25,7 @@ def scan():
                   "-unprocessed.pcap"
 
     try:
+        # making the saved pcap able to be deleted by normal users since it was created with root
         call(["touch", capturePath])
         call(["chmod", "777", capturePath])
     except Exception, errmsg:
@@ -38,17 +41,9 @@ def scan():
                          "-a", ("duration:"+captureDuration), # run time
                          "-w", capturePath])
 
-        # making the saved pcap able to be deleted by normal users since it was created with root
-
-
     except Exception, errmsg:
         print "Scan thread failed while running:"
         print errmsg
 
-
-
     ThreadKeeper.decrementThreadCount()
-    return
-
-def processPacket(p):
-    print "got one"
+    return capturePath
