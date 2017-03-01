@@ -17,7 +17,7 @@ def TRAKr(app):
 
     # handling pre-run parameters first
     if TRAKr.params.reset:
-        ConfigHelper.ConfigHelper().resetConfig()
+        configHelper.resetConfig()
 
     if TRAKr.params.export_database:
         DatabaseExporter.exportDatabases()
