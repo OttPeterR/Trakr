@@ -52,6 +52,7 @@ class ConfigHelper():
 ########### access methods ###########
 ######################################
 
+
     #application
 
 def autoStart():
@@ -61,6 +62,7 @@ def getTRAKrFullPath():
     return configParser.get("trakr", "full_path")
 
 
+
     #scanner
 
 def getWirelessCaptureInterface():
@@ -68,6 +70,9 @@ def getWirelessCaptureInterface():
 
 def getCaptureDuration():
     return configParser.get("scanner", "duration")
+
+def getCaptureDirectory():
+    return configParser.get("scanner", "capture_dir")
 
     #database
 
