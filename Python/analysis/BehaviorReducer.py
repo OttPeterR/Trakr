@@ -1,2 +1,13 @@
-#parses through the rolling database and makes guesses as to when MACs enter and exit
-#after computation, it gives its data to the BehaviorDatabase to insert it into the DB
+import thread
+from analysis import BehaviorReducerThread
+
+def analyze(dbPath):
+    BehaviorReducerThread.analyze(dbPath)
+
+
+def beginAnalysis(dbPath):
+    try:
+        thread.start_new_thread(analyze, (dbPath))
+    except Exception, errmsg:
+        print "Pcap analysis failed to start:"
+        print errmsg
