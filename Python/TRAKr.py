@@ -1,8 +1,10 @@
 import cli.app
 import os
 
-from config import ConfigHelper
+import ThreadKeeper
+
 from scanner import Scanner
+from config import ConfigHelper
 from database import DatabaseExporter
 
 
@@ -33,6 +35,11 @@ def TRAKr(app):
             print "Please run as root to capture packets. Exiting..."
             os._exit(0)
 
+
+    #giving the params a chance to start their threads
+    ThreadKeeper.wait(3)
+
+    ThreadKeeper.waitForThreads()
     print("[TRAKr] - Shutting Down")
 
 
