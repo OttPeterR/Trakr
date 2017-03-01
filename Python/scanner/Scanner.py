@@ -1,13 +1,13 @@
 import thread
 from scanner import ScannerThread
 
-def start():
-    ScannerThread.scanLoop()
+def start(alsoAnalyze):
+    ScannerThread.scanLoop(alsoAnalyze)
 
 
-def beginScan():
+def beginScan(alsoAnalyze):
     try:
-        thread.start_new_thread(start, ())
+        thread.start_new_thread(start, (alsoAnalyze,))
     except Exception, errmsg:
         print "Scan thread failed to start:"
         print errmsg

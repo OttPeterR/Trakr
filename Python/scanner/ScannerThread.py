@@ -6,10 +6,11 @@ from config import ConfigHelper
 from file.pcap import Extractor
 
 
-def scanLoop():
+def scanLoop(alsoAnalyze):
     while True:
         pcapPath = scan()
-        Extractor.ExtractFromFile(pcapPath)
+        if alsoAnalyze:
+            Extractor.ExtractFromFile(pcapPath)
 
 
 def scan():
@@ -32,14 +33,16 @@ def scan():
         print errmsg
 
     try:
-        print "New thread is scanning..."
+        output = open("/dev/null", "wr")
+
         # tshark -I -i CAPTURE_INTERFACE -a duration:CAPTURE_DURATION -w OUTPUT_FILE.pcap
         call(["tshark",
                          "-I",  #monitor mode
                          "-i", captureInterface, # capture interface
                          "-a", ("duration:"+captureDuration), # run time
-                         "-w", capturePath])
-
+                         "-w", capturePath] #where to save the file
+                         #, stdout=output #redirecting the output to null
+             )
     except Exception, errmsg:
         print "Scan thread failed while running:"
         print errmsg
