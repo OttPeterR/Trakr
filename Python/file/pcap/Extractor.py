@@ -1,5 +1,7 @@
 import thread
+
 import ExtractorThread
+
 
 def start(filePath):
     ExtractorThread.extract(filePath)

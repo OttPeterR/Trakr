@@ -1,9 +1,9 @@
 #from scapy.all import sniff
-from config import ConfigHelper
 from subprocess import call
-from file import Extractor
-import ThreadKeeper
 
+import ThreadKeeper
+from config import ConfigHelper
+from file.pcap import Extractor
 
 
 def scanLoop():
