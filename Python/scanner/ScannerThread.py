@@ -20,7 +20,7 @@ def scan():
     captureDuration = str(ConfigHelper.getCaptureDuration())
 
     captureDirectory = str(ConfigHelper.getTRAKrFullPath())
-    capturePath = captureDirectory + "/scanner/output/" + \
+    capturePath = captureDirectory + "/runtime/pcap/" + \
                   ThreadKeeper.getTimeStamp() + \
                   "-unprocessed.pcap"
 
