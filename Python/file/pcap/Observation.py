@@ -1,4 +1,4 @@
-class Packet:
+class Observation:
     time = 0.0
     mac = [0xff]*6
     lat = 0.0
@@ -10,11 +10,11 @@ class Packet:
         self.lat = lat
         self.long = long
 
-def makePacket(packet):
-    return Packet(__getTime(packet),
-                  __getTransmissionAddress(packet),
-                  __getLat(packet),
-                  __getLong(packet))
+def makeObservation(packet):
+    return Observation(__getTime(packet),
+                       __getTransmissionAddress(packet),
+                       __getLat(packet),
+                    __getLong(packet))
 
 def __getTransmissionAddress(packet):
     if packet.name == "Ethernet":
@@ -26,7 +26,6 @@ def __getTransmissionAddress(packet):
             return "error"
     else:
         return "unknown"
-
 
 #UNIX time in seconds
 def __getTime(packet):

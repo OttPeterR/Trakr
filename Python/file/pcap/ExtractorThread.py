@@ -2,7 +2,7 @@ from scapy.all import *
 
 
 import ThreadKeeper
-import Packet
+import Observation
 
 
 def extract(filePath):
@@ -11,12 +11,12 @@ def extract(filePath):
 
     packets = rdpcap(filePath)
 
-    processedPackets = []
+    observations = []
 
     for packet in packets:
-        processedPackets += [Packet.makePacket(packet)]
+        observations += [Observation.makeObservation(packet)]
 
-    print len(processedPackets)
+    print len(observations)
 
     ThreadKeeper.decrementThreadCount()
     return
