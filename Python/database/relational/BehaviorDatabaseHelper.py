@@ -3,16 +3,15 @@ from config import ConfigHelper
 import sqlite3
 
 
-class RollingDatabaseHelper():
-    global conn
+def init():
+    global connection
 
     pathToDB = ConfigHelper.getRollingDatabasePath()
-    #open connection with database
-    conn =sqlite3.connect(pathToDB)
-
+    connection = sqlite3.connect(pathToDB)
+    __behavioralDatabaseInit()
 
 def loadObservation(mac, time, type):
-    global conn
+    global connection
     #adds in the data to the table
 
     return
@@ -20,8 +19,9 @@ def loadObservation(mac, time, type):
 
 
 #this makes the database if it does not exist
-def rollingDatabaseInit():
-    conn.execute('''CREATE TABLE REDUCED
+def __behavioralDatabaseInit():
+    global connection
+    connection.execute('''CREATE TABLE IF NOT EXISTS REDUCED
            (ID INT PRIMARY KEY     NOT NULL,
            ADDRESS         TEXT    NOT NULL,
            TIME            INT     NOT NULL,
