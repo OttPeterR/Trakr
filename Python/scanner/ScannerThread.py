@@ -5,17 +5,24 @@ import ThreadKeeper
 
 def scan():
     ThreadKeeper.incrementThreadCount()
+
+    captureInterface = str(ConfigHelper.getWirelessCaptureInterface())
+    captureDuration = str(ConfigHelper.getCaptureDuration())
+
+    captureDirectory = str(ConfigHelper.getTRAKrFullPath())
+    capturePath = captureDirectory + "/scanner/output/" + \
+                  ThreadKeeper.getTimeStamp() + \
+                  "-unprocessed.pcap"
+
+    try:
+        call(["touch", capturePath])
+        call(["chmod", "777", capturePath])
+    except Exception, errmsg:
+        print "Could not change output file permissions, you'll need root permissions to delete it now, sorry about that..."
+        print errmsg
+
     try:
         print "New thread is scanning..."
-
-        captureInterface = str(ConfigHelper.getWirelessCaptureInterface())
-        captureDuration = str(ConfigHelper.getCaptureDuration())
-
-        captureDirectory = str(ConfigHelper.getTRAKrFullPath())
-        capturePath = captureDirectory + "/scanner/output/" + \
-                      ThreadKeeper.getTimeStamp() + \
-                      "-unprocessed.pcap"
-
         # tshark -I -i CAPTURE_INTERFACE -a duration:CAPTURE_DURATION -w OUTPUT_FILE.pcap
         call(["tshark",
                          "-I",  #monitor mode
@@ -24,12 +31,14 @@ def scan():
                          "-w", capturePath])
 
         # making the saved pcap able to be deleted by normal users since it was created with root
-        call(["chmod", "777", capturePath])
 
 
     except Exception, errmsg:
         print "Scan thread failed while running:"
         print errmsg
+
+
+
     ThreadKeeper.decrementThreadCount()
     return
 
