@@ -2,14 +2,16 @@ import cli.app
 import os
 
 import ThreadKeeper
-
 from scanner import Scanner
 from config import ConfigHelper
 from database import DatabaseExporter
+from database import DatabaseInit
 
 
 @cli.app.CommandLineApp
 def TRAKr(app):
+
+
     print "[TRAKr] - Starting Up"
     # make sure the settings are all loaded up and good
 
@@ -33,10 +35,10 @@ def TRAKr(app):
     else:
         if TRAKr.params.scan:
             needToWait = True
-            scan()
+            scan(True)
 
-        #if TRAKr.params.analyze:
-        #    analyze()
+        if TRAKr.params.analyze:
+            analyze()
 
 
 
@@ -53,28 +55,31 @@ def TRAKr(app):
 
 # Helper functions to do the things
 
-def scan():
+def scan(alsoAnalyze):
     # root check
     if os.geteuid() == 0:
         # we're good to go, let's scan, this will loop infinitely
-        Scanner.beginScan()
+        initDBs()
+        Scanner.beginScan(alsoAnalyze)
     else:
         # sucks. no scanning today
         print "Please run as root to capture packets. Exiting..."
         os._exit(0)
     return
 
-
 def analyze():
-    # call analysis
-
+    initDBs()
+    # call analysis to process the folder of stuff
     return
-
 
 def run():
-    scan()
-    analyze()
+    initDBs()
+    scan(True) #while running a single instance, scan will call it's own analysis
     return
+
+
+def initDBs():
+    DatabaseInit.initDBs()
 
 # for operational things, use a parameter that gets set
 TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
@@ -83,10 +88,10 @@ TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database"
 TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
 TRAKr.add_param("-d", "--export_database", help="this exports the graph.db and reduced.db into the /export dir",
                 action='store_true', default=False)
+TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store_true')
 
 #TODO params to add:
 #   -i import pcap from file or directory for analysis, remember to ask for lat/long
-#   -a run analysis
 
 
 
