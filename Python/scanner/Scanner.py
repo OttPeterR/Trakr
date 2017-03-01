@@ -1,8 +1,15 @@
 import thread
 from scanner import ScannerThread
+import ThreadKeeper
+
+def startScan():
+    ScannerThread.scan()
 
 
 def beginScan():
-    print "Starting WiFi Capture Thread..."
-    thread.start_new(ScannerThread.scan())
-
+    numThreads = ThreadKeeper.getNumThreads()
+    try:
+        thread.start_new_thread(startScan, ())
+    except Exception, errmsg:
+        print "Scan thread failed:"
+        print errmsg
