@@ -1,4 +1,5 @@
 from time import sleep
+from time import strftime
 
 global numThreads
 numThreads = 0
@@ -9,6 +10,8 @@ def getNumThreads():
     global numThreads
     return numThreads
 
+def getTimeStamp():
+    return strftime("%Y-%m-%d-%H:%M:%S")
 
 def wait(seconds):
     sleep(seconds)
