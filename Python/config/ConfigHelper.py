@@ -55,8 +55,11 @@ class ConfigHelper():
 
     #application
 
-    def autoStart(self):
-        return configParser.getboolean("scanner", "autostart")
+def autoStart():
+    return configParser.getboolean("trakr", "autostart")
+
+def getTRAKrFullPath():
+    return configParser.get("trakr", "full_path")
 
 
     #scanner
@@ -64,14 +67,17 @@ class ConfigHelper():
 def getWirelessCaptureInterface():
     return configParser.get("scanner", "interface")
 
+def getCaptureDuration():
+    return configParser.get("scanner", "duration")
+
     #database
 
-    def getRollingDatabasePath(self):
-        return configParser.get("db", "rolling_path")
+def getRollingDatabasePath():
+    return configParser.get("db", "rolling_path")
 
-    def getBehaviorDatabasePath(self):
-        return configParser.get("db", "behavior_path")
+def getBehaviorDatabasePath():
+    return configParser.get("db", "behavior_path")
 
-    def getGraphDatabasePath(self):
-        return configParser.get("db", "graph_path")
+def getGraphDatabasePath():
+    return configParser.get("db", "graph_path")
 

@@ -11,6 +11,12 @@ def createDefaultConfig():
 
     fullPath = str(getFullTrakrPath())
 
+
+    config.add_section("trakr")
+    config.set("trakr", "full_path", fullPath)
+    config.set("trakr", "autostart", False)
+
+
     #database section
     config.add_section("db")
     config.set("db", "rolling_path", (fullPath + "/db/rolling.db"))
@@ -23,8 +29,7 @@ def createDefaultConfig():
     # find a way to check the OS and then get the default interface
     # because this works for MacOS only
     config.set("scanner", "interface", "en0")
-    config.set("scanner", "autostart", False)
-    config.set("scanner","observation_interval_seconds", 600)
+    config.set("scanner","duration", 15)
 
     #analysis section
     config.add_section("analysis")
