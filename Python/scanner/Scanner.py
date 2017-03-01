@@ -11,5 +11,5 @@ def beginScan():
     try:
         thread.start_new_thread(startScan, ())
     except Exception, errmsg:
-        print "Scan thread failed:"
+        print "Scan thread failed to start:"
         print errmsg
