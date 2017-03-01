@@ -16,11 +16,14 @@ def TRAKr(app):
     configHelper = ConfigHelper.ConfigHelper()
     configHelper.startUp()
 
+    needToWait = False
+
     # handling pre-run parameters first
     if TRAKr.params.reset:
         configHelper.resetConfig()
 
     if TRAKr.params.export_database:
+        needToWait = True
         DatabaseExporter.exportDatabases()
 
     # handling run parameters
@@ -29,15 +32,16 @@ def TRAKr(app):
         # root check
         if os.geteuid() == 0:
             # we're good to go, let's scan
+            needToWait = True
             Scanner.beginScan()
         else:
             # too bad
             print "Please run as root to capture packets. Exiting..."
             os._exit(0)
 
-
-    #giving the params a chance to start their threads
-    ThreadKeeper.wait(3)
+    if needToWait:
+        # giving the params a chance to start their threads
+        ThreadKeeper.wait(3)
 
     ThreadKeeper.waitForThreads()
     print("[TRAKr] - Shutting Down")
