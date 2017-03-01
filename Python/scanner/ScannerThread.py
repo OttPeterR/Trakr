@@ -14,7 +14,7 @@ def scan():
         captureDirectory = str(ConfigHelper.getTRAKrFullPath())
         capturePath = captureDirectory + "/scanner/output/" + \
                       ThreadKeeper.getTimeStamp() + \
-                      ".pcap"
+                      "-unprocessed.pcap"
 
         # tshark -I -i CAPTURE_INTERFACE -a duration:CAPTURE_DURATION -w OUTPUT_FILE.pcap
         call(["tshark",
