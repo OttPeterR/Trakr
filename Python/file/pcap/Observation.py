@@ -1,6 +1,6 @@
 class Observation:
     time = 0.0
-    mac = [0xff]*6
+    mac = "00:00:00:00:00:00"
     lat = 0.0
     long = 0.0
 
