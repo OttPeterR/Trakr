@@ -2,7 +2,7 @@ from scapy.all import *
 
 
 import ThreadKeeper
-import PacketExtractor
+import Packet
 
 
 def extract(filePath):
@@ -14,7 +14,7 @@ def extract(filePath):
     processedPackets = []
 
     for packet in packets:
-        processedPackets += [PacketExtractor.makePacket(packet)]
+        processedPackets += [Packet.makePacket(packet)]
 
     print len(processedPackets)
 
