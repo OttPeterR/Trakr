@@ -19,7 +19,7 @@ def TRAKr(app):
     if TRAKr.params.reset:
         ConfigHelper.ConfigHelper().resetConfig()
 
-    if TRAKr.params.export:
+    if TRAKr.params.export_database:
         DatabaseExporter.exportDatabases()
 
     # handling run parameters
@@ -54,7 +54,7 @@ TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing
                 action='store_true')
 TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
 TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
-TRAKr.add_param("-export", "--export", help="this exports the graph.db and reduced.db into the /export dir",
+TRAKr.add_param("-d", "--export_database", help="this exports the graph.db and reduced.db into the /export dir",
                 action='store_true', default=False)
 
 if __name__ == '__main__':
