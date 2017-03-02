@@ -29,12 +29,21 @@ def __rollingDatabaseInit():
     #(ID INT PRIMARY KEY     NOT NULL, \
 
     connection.execute("CREATE TABLE IF NOT EXISTS OBSERVATIONS \
-           (ADDRESS         TEXT    NOT NULL, \
-           TIME            INT     NOT NULL, \
+           (ADDRESS        TEXT    NOT NULL, \
+           TIME            DOUBLE  NOT NULL, \
            LAT             DOUBLE  NOT NULL, \
            LONG            DOUBLE  NOT NULL);")
+    commit()
 
 def connect():
     global connection
     pathToDB = ConfigHelper.getRollingDatabasePath()
     connection = sqlite3.connect(pathToDB)
+
+def commit():
+    global connection
+    connection.commit()
+
+def close():
+    global connection
+    connection.close()

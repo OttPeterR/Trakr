@@ -27,6 +27,9 @@ def loadObservations(observations):
     RollingDatabaseHelper.connect()
     for o in observations:
         RollingDatabaseHelper.loadPacket(o)
+
+    RollingDatabaseHelper.commit()
+    RollingDatabaseHelper.close()
     return
 
 
