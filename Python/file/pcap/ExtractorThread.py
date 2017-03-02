@@ -2,6 +2,7 @@ from scapy.all import *
 from subprocess import call
 
 from database.relational import RollingDatabaseHelper
+from database.relational import BehaviorDatabaseHelper
 import ThreadKeeper
 import Observation
 
@@ -15,10 +16,9 @@ def extract(filePath):
     for packet in packets:
         observations += [Observation.makeObservation(packet)]
 
-
     loadObservations(observations)
+    getUniqueMACs(observations)
 
-    dict = getUniqueMACs(observations)
     ThreadKeeper.decrementThreadCount()
     return
 
@@ -37,17 +37,25 @@ def loadObservations(observations):
 
 def getUniqueMACs(observations):
     ind = 0
+    newUnique = 0
     dict = {} #dictionary of unique MAC addresses
     address = ""
+
+    BehaviorDatabaseHelper.connect()
 
     for o in observations:
         # is this a new mac address?
         if o.mac not in dict:
             dict[o.mac] = ind
+            if BehaviorDatabaseHelper.addNewAddress(o.mac):
+                newUnique = newUnique+1
             ind = ind + 1
 
-    print "unique: " + str(len(dict))
-    return dict
+    BehaviorDatabaseHelper.commit()
+    BehaviorDatabaseHelper.close()
+
+    print "new unique: " + str(newUnique)
+    return
 
 
 
