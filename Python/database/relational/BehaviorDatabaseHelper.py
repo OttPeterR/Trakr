@@ -31,7 +31,13 @@ def __behavioralDatabaseInit():
     #making table to hold all unique MACs
     connection.execute('''CREATE TABLE IF NOT EXISTS UNIQUEMACS
                (ADDRESS     TEXT     PRIMARY KEY     NOT NULL);''')
+
+    #adding some very common addresses I don't care about
+    #having them at the top of the table will make searching easier
     addNewAddress("None")
+    addNewAddress("ff:ff:ff:ff:ff:ff")
+    addNewAddress("00:00:00:00:00:00")
+
     commit()
 
 
