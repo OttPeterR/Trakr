@@ -5,15 +5,19 @@ import sqlite3
 def init():
     global connection
 
-    pathToDB = ConfigHelper.getRollingDatabasePath()
-    connection = sqlite3.connect(pathToDB)
+    connect()
     __rollingDatabaseInit()
 
-def loadPacket(packet):
+def loadPacket(o):
     global connection
-    #loads it into the database
+    #the type of packet is Observation
+    connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) \
+                            VALUES ("
+                                " '"+str(o.mac)+"' , "
+                                +str(o.time)+", "
+                                +str(o.lat)+", "
+                                +str(o.long)+" )")
 
-    #the type of packet is Observationd
 
     return True
 
@@ -21,9 +25,16 @@ def loadPacket(packet):
 #this makes the database if it does not exist
 def __rollingDatabaseInit():
     global connection
-    connection.execute('''CREATE TABLE IF NOT EXISTS ROLLING
-           (ID INT PRIMARY KEY     NOT NULL,
-           ADDRESS         TEXT    NOT NULL,
-           TIME            INT     NOT NULL,
-           LAT             DOUBLE  NOT NULL,
-           LONG            DOUBLE  NOT NULL);''')
+
+    #(ID INT PRIMARY KEY     NOT NULL, \
+
+    connection.execute("CREATE TABLE IF NOT EXISTS OBSERVATIONS \
+           (ADDRESS         TEXT    NOT NULL, \
+           TIME            INT     NOT NULL, \
+           LAT             DOUBLE  NOT NULL, \
+           LONG            DOUBLE  NOT NULL);")
+
+def connect():
+    global connection
+    pathToDB = ConfigHelper.getRollingDatabasePath()
+    connection = sqlite3.connect(pathToDB)

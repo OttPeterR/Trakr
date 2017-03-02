@@ -1,6 +1,7 @@
 from scapy.all import *
 from subprocess import call
 
+from database.relational import RollingDatabaseHelper
 import ThreadKeeper
 import Observation
 
@@ -15,8 +16,17 @@ def extract(filePath):
         observations += [Observation.makeObservation(packet)]
 
 
+    loadObservations(observations)
+
     dict = getUniqueMACs(observations)
     ThreadKeeper.decrementThreadCount()
+    return
+
+
+def loadObservations(observations):
+    RollingDatabaseHelper.connect()
+    for o in observations:
+        RollingDatabaseHelper.loadPacket(o)
     return
 
 
@@ -24,7 +34,7 @@ def extract(filePath):
 
 def getUniqueMACs(observations):
     ind = 0
-    dict = {}
+    dict = {} #dictionary of unique MAC addresses
     address = ""
 
     for o in observations:
@@ -35,6 +45,9 @@ def getUniqueMACs(observations):
 
     print "unique: " + str(len(dict))
     return dict
+
+
+
 
 def __renamePcap(filePath):
     if filePath.endswith("-unprocessed.pcap"):
