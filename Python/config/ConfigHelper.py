@@ -77,6 +77,7 @@ def getCaptureDirectory():
 def getKeepAllPcaps():
     return configParser.getboolean("scanner", "keep_all_pcap")
 
+
     #database
 
 def getRollingDatabasePath():
@@ -88,3 +89,5 @@ def getBehaviorDatabasePath():
 def getGraphDatabasePath():
     return configParser.get("db", "graph_path")
 
+def getHash():
+    return configParser.getboolean("db", "hash")
