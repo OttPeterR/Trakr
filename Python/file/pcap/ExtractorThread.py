@@ -3,6 +3,7 @@ from subprocess import call
 
 from database.relational import RollingDatabaseHelper
 from database.relational import BehaviorDatabaseHelper
+from config.ConfigHelper import getKeepAllPcaps
 import ThreadKeeper
 import Observation
 
@@ -11,7 +12,9 @@ def extract(filePath):
     ThreadKeeper.incrementThreadCount()
 
     packets = rdpcap(filePath)
-    __renamePcap(filePath)
+
+    __handleOldPcapFile(filePath)
+
     observations = []
     for packet in packets:
         observations += [Observation.makeObservation(packet)]
@@ -60,7 +63,18 @@ def getUniqueMACs(observations):
 
 
 
+
+
 def __renamePcap(filePath):
     if filePath.endswith("-unprocessed.pcap"):
         newFilePath = filePath[:-17]+".pcap"
         call(["mv", filePath, newFilePath])
+
+def __deletePcap(filePath):
+    call(["rm", filePath])
+
+def __handleOldPcapFile(filePath):
+    if getKeepAllPcaps():
+        __renamePcap(filePath)
+    else:
+        __deletePcap(filePath)

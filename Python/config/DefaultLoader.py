@@ -31,6 +31,7 @@ def createDefaultConfig():
     config.set("scanner", "interface", "en0")
     config.set("scanner","duration", 60*10) #scan for 10 minutes
     config.set("scanner", "capture_dir", fullPath+"/runtime/pcap/")
+    config.set("scanner", "keep_all_pcap", True)
 
     # analysis section
     config.add_section("analysis")

@@ -74,6 +74,9 @@ def getCaptureDuration():
 def getCaptureDirectory():
     return configParser.get("scanner", "capture_dir")
 
+def getKeepAllPcaps():
+    return configParser.getboolean("scanner", "keep_all_pcap")
+
     #database
 
 def getRollingDatabasePath():
