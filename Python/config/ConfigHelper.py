@@ -74,6 +74,8 @@ def getCaptureDuration():
 def getCaptureDirectory():
     return configParser.get("scanner", "capture_dir")
 
+
+
     #database
 
 def getRollingDatabasePath():
@@ -85,3 +87,5 @@ def getBehaviorDatabasePath():
 def getGraphDatabasePath():
     return configParser.get("db", "graph_path")
 
+def getHash():
+    return configParser.getboolean("db", "hash")
