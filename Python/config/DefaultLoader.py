@@ -22,6 +22,7 @@ def createDefaultConfig():
     config.set("db", "rolling_path", (fullPath + "/runtime/db/rolling.db"))
     config.set("db", "behavior_path", (fullPath + "/runtime/db/behavior.db"))
     config.set("db", "graph_path", (fullPath + "/runtime/db/graph.db"))
+    config.set("db", "hash", True)
 
     # scanner section
     config.add_section("scanner")
