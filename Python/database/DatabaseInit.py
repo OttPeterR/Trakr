@@ -16,9 +16,18 @@ def initDBs():
     print "Databases initialized."
     return
 
+def deleteDBs():
+    __deleteDB(ConfigHelper.getRollingDatabasePath())
+    __deleteDB(ConfigHelper.getBehaviorDatabasePath())
+    print "Databases deleted."
+
 
 def __initDB(path):
     call(["touch", path])
     call(["chmod", "777", path])
     connection = sqlite3.connect(path)
     connection.close()
+
+
+def __deleteDB(path):
+    call(["rm", path])

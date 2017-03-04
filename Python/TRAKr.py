@@ -24,9 +24,15 @@ def TRAKr(app):
     if TRAKr.params.reset:
         configHelper.resetConfig()
 
-    if TRAKr.params.export_database:
+    if TRAKr.params.export_databases:
         needToWait = True
         DatabaseExporter.exportDatabases()
+
+    elif TRAKr.params.delete_databases:
+        deleteDBs()
+        initDBs()
+
+
 
     # handling run parameters
 
@@ -81,13 +87,17 @@ def run():
 def initDBs():
     DatabaseInit.initDBs()
 
+def deleteDBs():
+    DatabaseInit.deleteDBs()
+
 # for operational things, use a parameter that gets set
 TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
                 action='store_true')
 TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
 TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
-TRAKr.add_param("-d", "--export_database", help="this exports the graph.db and reduced.db into the /export dir",
+TRAKr.add_param("-db", "--export_databases", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
                 action='store_true', default=False)
+TRAKr.add_param("-delDB", "--delete_databases", help="delete all databases and create new ones.", action='store_true', default=False)
 TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store_true')
 
 #TODO params to add:
