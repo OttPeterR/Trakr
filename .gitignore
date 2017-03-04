@@ -20,3 +20,5 @@ Python/config/trakr.ini
 *.pcap
 
 *.db
+
+*.db-journal
