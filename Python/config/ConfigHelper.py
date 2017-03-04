@@ -61,6 +61,9 @@ def autoStart():
 def getTRAKrFullPath():
     return configParser.get("trakr", "full_path")
 
+def getKey():
+    return configParser.get("trakr", "key")
+
 
 
     #scanner

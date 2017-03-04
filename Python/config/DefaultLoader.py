@@ -15,6 +15,7 @@ def createDefaultConfig():
     config.add_section("trakr")
     config.set("trakr", "full_path", fullPath)
     config.set("trakr", "autostart", False)
+    config.set("trakr", "key", "you-need-to-change-this")
 
 
     # database section
