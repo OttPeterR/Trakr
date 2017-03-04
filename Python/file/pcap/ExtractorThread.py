@@ -50,8 +50,7 @@ def getUniqueMACs(observations):
         # is this a new mac address?
         if o.mac not in dict:
             dict[o.mac] = ind
-            newMAC = str(o.mac).replace(':', '')
-            if BehaviorDatabaseHelper.addNewAddress(newMAC):
+            if BehaviorDatabaseHelper.addNewAddress(o.mac):
                 newUnique = newUnique+1
             ind = ind + 1
 
