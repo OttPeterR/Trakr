@@ -1,5 +1,6 @@
 import cli.app
 import os
+import SystemEvents
 
 import ThreadKeeper
 from scanner import Scanner
@@ -29,22 +30,22 @@ def TRAKr(app):
         DatabaseExporter.exportDatabases()
 
     elif TRAKr.params.delete_databases:
-        deleteDBs()
-        initDBs()
+        __deleteDBs()
+        __initDBs()
 
 
 
     # handling run parameters
 
     if TRAKr.params.run:
-        run()
+        __run()
     else:
         if TRAKr.params.scan:
             needToWait = True
-            scan(True)
+            __scan(True)
 
         if TRAKr.params.analyze:
-            analyze()
+            __analyze()
 
 
 
@@ -61,11 +62,11 @@ def TRAKr(app):
 
 # Helper functions to do the things
 
-def scan(alsoAnalyze):
+def __scan(alsoAnalyze):
     # root check
     if os.geteuid() == 0:
         # we're good to go, let's scan, this will loop infinitely
-        initDBs()
+        __initDBs()
         Scanner.beginScan(alsoAnalyze)
     else:
         # sucks. no scanning today
@@ -73,22 +74,28 @@ def scan(alsoAnalyze):
         os._exit(0)
     return
 
-def analyze():
-    initDBs()
+def __analyze():
+    __initDBs()
     # call analysis to process the folder of stuff
     return
 
-def run():
-    initDBs()
-    scan(True) #while running a single instance, scan will call it's own analysis
+def __run():
+    __initDBs()
+    __scan(True) #while running a single instance, scan will call it's own analysis
     return
 
 
-def initDBs():
+def __initDBs():
     DatabaseInit.initDBs()
 
-def deleteDBs():
+def __deleteDBs():
     DatabaseInit.deleteDBs()
+
+def __removePcaps():
+    # http://stackoverflow.com/questions/1995373/
+    path = str(ConfigHelper.getCaptureDirectory())
+    [os.remove(path+f) for f in os.listdir(path) if f.endswith(".pcap")]
+
 
 # for operational things, use a parameter that gets set
 TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
@@ -106,4 +113,10 @@ TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store
 
 
 if __name__ == '__main__':
-    TRAKr.run()
+    try:
+        TRAKr.run()
+        #catch the keyboard interrupt and cleanup half open files
+    except KeyboardInterrupt:
+        print "\nTRAKr - Shutting down...\n"
+        __removePcaps()
+        os._exit(0)
