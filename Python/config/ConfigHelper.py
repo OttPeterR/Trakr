@@ -101,5 +101,5 @@ def getGraphDatabasePath():
     return configParser.get("db", "graph_path")
 
 
-def getHash():
-    return configParser.getboolean("db", "hash")
+def shouldHash():
+    return configParser.getboolean("db", "hash_values")

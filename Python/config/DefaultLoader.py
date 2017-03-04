@@ -26,7 +26,7 @@ def createDefaultConfig():
     config.set("db", "rolling_table_name", "ROLLING")
 
     config.set("db", "graph_path", (fullPath + "/runtime/db/graph.db"))
-    config.set("db", "hash", True)
+    config.set("db", "hash_values", True)
 
     # scanner section
     config.add_section("scanner")
