@@ -35,6 +35,7 @@ def __behavioralDatabaseInit():
     #adding some very common addresses I don't care about
     #having them at the top of the table will make searching easier
     addNewAddress("None")
+    addNewAddress("error")
     addNewAddress("ff:ff:ff:ff:ff:ff")
     addNewAddress("00:00:00:00:00:00")
 
