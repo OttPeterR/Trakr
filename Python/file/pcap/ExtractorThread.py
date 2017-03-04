@@ -8,7 +8,7 @@ import ThreadKeeper
 import Observation
 
 
-def extract(filePath):
+def extract(filePath, lat=0, long=0):
     ThreadKeeper.incrementThreadCount()
 
     packets = rdpcap(filePath)

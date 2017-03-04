@@ -6,11 +6,11 @@ from config import ConfigHelper
 from file.pcap import Extractor
 
 
-def scanLoop(alsoAnalyze):
+def scanLoop(alsoAnalyze, lat=0, long=0):
     while True:
         pcapPath = scan()
         if alsoAnalyze:
-            Extractor.ExtractFromFile(pcapPath)
+            Extractor.ExtractFromFile(pcapPath, lat, long)
 
 
 def scan():
