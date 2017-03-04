@@ -36,8 +36,8 @@ def createDefaultConfig():
 
     # analysis section
     config.add_section("analysis")
-    config.set("analysis", "exit_seconds", 60*30) # 30 minutes
-    config.set("analysis", "enter_period_seconds", 60*3) # 3 minutes
+    config.set("analysis", "exit_seconds", 60*45) # 45 minutes
+    config.set("analysis", "enter_period_seconds", 60*6) # 6 minutes
 
     # enter_period_second will be divided into enter_subperiod groups
     # and there must be at least one wifi observation in each of those
