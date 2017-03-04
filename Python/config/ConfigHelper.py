@@ -83,11 +83,23 @@ def getKeepAllPcaps():
 def getRollingDatabasePath():
     return configParser.get("db", "rolling_path")
 
+def getRollingTableName():
+    return configParser.get("db", "rolling_table_name")
+
+
 def getBehaviorDatabasePath():
     return configParser.get("db", "behavior_path")
 
+def getReducedTableName():
+    return configParser.get("db", "reduced_table_name")
+
+def getUniqueTableName():
+    return configParser.get("db", "unqiue_table_name")
+
+
 def getGraphDatabasePath():
     return configParser.get("db", "graph_path")
+
 
 def getHash():
     return configParser.getboolean("db", "hash")

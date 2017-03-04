@@ -20,17 +20,17 @@ def __behavioralDatabaseInit():
     global connection
 
     #making table for the behaviors of when they enter and exit
-    connection.execute('''CREATE TABLE IF NOT EXISTS REDUCED
-               (ID INT PRIMARY KEY     NOT NULL,
-               ADDRESS         TEXT    NOT NULL,
-               TIME            INT     NOT NULL,
-               TYPE            SHORT   NOT NULL,
-               LAT             DOUBLE  NOT NULL,
-               LONG            DOUBLE  NOT NULL);''')
+    connection.execute("CREATE TABLE IF NOT EXISTS REDUCED"+str(ConfigHelper.getReducedTableName())+" \
+               (ID INT PRIMARY KEY     NOT NULL, \
+               ADDRESS         TEXT    NOT NULL, \
+               TIME            INT     NOT NULL, \
+               TYPE            SHORT   NOT NULL, \
+               LAT             DOUBLE  NOT NULL, \
+               LONG            DOUBLE  NOT NULL);")
 
     #making table to hold all unique MACs
-    connection.execute('''CREATE TABLE IF NOT EXISTS UNIQUEMACS
-               (ADDRESS     TEXT     PRIMARY KEY     NOT NULL);''')
+    connection.execute("CREATE TABLE IF NOT EXISTS "+str(ConfigHelper.getUniqueTableName())+ "\
+               (ADDRESS     TEXT     PRIMARY KEY     NOT NULL);")
 
     #adding some very common addresses I don't care about
     #having them at the top of the table will make searching easier
@@ -46,7 +46,9 @@ def __behavioralDatabaseInit():
 def addNewAddress(address):
     global connection
     try:
-        connection.execute("INSERT INTO UNIQUEMACS (ADDRESS) VALUES ('"+str(address)+"')");
+        newAddress = str(address).replace(':', '')
+        newAddress = newAddress.upper()
+        connection.execute("INSERT INTO "+str(ConfigHelper.getUniqueTableName())+" (ADDRESS) VALUES ('"+newAddress+"')");
     except Exception, errmsg:
         #print "New MAC address not inserted, was not unique"
         #print errmsg
