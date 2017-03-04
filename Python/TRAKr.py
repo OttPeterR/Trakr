@@ -12,7 +12,7 @@ from database import DatabaseInit
 def TRAKr(app):
 
 
-    print "[TRAKr] - Starting Up"
+    #print "[TRAKr] - Starting Up"
     # make sure the settings are all loaded up and good
 
     configHelper = ConfigHelper.ConfigHelper()
@@ -55,7 +55,7 @@ def TRAKr(app):
         ThreadKeeper.wait(3)
 
     ThreadKeeper.waitForThreads()
-    print("[TRAKr] - Shutting Down")
+    #print("[TRAKr] - Shutting Down")
 
 
 

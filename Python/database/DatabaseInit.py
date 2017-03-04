@@ -13,7 +13,7 @@ def initDBs():
     BehaviorDatabaseHelper.init()
 
     #TODO init graph database
-    print "Databases initialized."
+    #print "Databases initialized."
     return
 
 def deleteDBs():
