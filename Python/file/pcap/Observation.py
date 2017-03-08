@@ -10,11 +10,10 @@ class Observation:
         self.lat = lat
         self.long = long
 
-def makeObservation(packet):
+def makeObservation(packet, lat, long):
     return Observation(__getTime(packet),
                        __getTransmissionAddress(packet),
-                       __getLat(packet),
-                    __getLong(packet))
+                       lat, long)
 
 def __getTransmissionAddress(packet):
     if packet.name == "Ethernet":
@@ -30,9 +29,3 @@ def __getTransmissionAddress(packet):
 #UNIX time in seconds
 def __getTime(packet):
     return packet.time
-
-def __getLat(packet):
-    return 0.0
-
-def __getLong(packet):
-    return 0.0

@@ -12,7 +12,6 @@ from scanner import Scanner
 
 @cli.app.CommandLineApp
 def TRAKr(app):
-
     ThreadKeeper.incrementThreadCount()
 
     configHelper = ConfigHelper.ConfigHelper()
@@ -29,8 +28,6 @@ def TRAKr(app):
         __deleteDBs()
         __initDBs()
 
-
-
     # handling run parameters
 
     if TRAKr.params.run:
@@ -39,9 +36,8 @@ def TRAKr(app):
         if TRAKr.params.scan:
             __scan(True)
 
-        #if TRAKr.params.loadfile:
-        #    __loadFile(path, lat, long)
-
+        if TRAKr.params.loadfile != "":
+            __loadFile(TRAKr.params.loadfile, TRAKr.params.latitude, TRAKr.params.longitude)
 
         if TRAKr.params.analyze:
             __analyze()
@@ -49,8 +45,7 @@ def TRAKr(app):
     ThreadKeeper.decrementThreadCount()
     ThreadKeeper.wait(0.01)
     ThreadKeeper.waitForThreads()
-    #print("[TRAKr] - Shutting Down")
-
+    # print("[TRAKr] - Shutting Down")
 
 
 # Helper functions to do the things
@@ -67,45 +62,54 @@ def __scan(loadToDabatase):
         os._exit(0)
     return
 
+
 def __analyze():
     __initDBs()
     # call analysis to process the folder of stuff
     return
 
+
 def __run():
     __initDBs()
-    __scan(True) #while running a single instance, scan will call it's own analysis
+    __scan(True)  # while running a single instance, scan will call it's own analysis
     return
 
 
-
 def __loadFile(path, latitude, longitude):
-    Extractor.ExtractFromFile(path, latitude, longitude)
+    print "Loading " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")"
+    Extractor.ExtractFromFile(path, latitude, longitude, False)
+
 
 def __initDBs():
     DatabaseInit.initDBs()
 
+
 def __deleteDBs():
     DatabaseInit.deleteDBs()
+
 
 def __removePcaps():
     # http://stackoverflow.com/questions/1995373/
     path = str(ConfigHelper.getCaptureDirectory())
-    [os.remove(path+f) for f in os.listdir(path) if f.endswith(".pcap")]
+    [os.remove(path + f) for f in os.listdir(path) if f.endswith(".pcap")]
 
 
 # for operational things, use a parameter that gets set
 TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
                 action='store_true')
 TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
-#TRAKr.add_param("-l","--loadfile",help="loads a pcap file into the database", action='store_true')
 TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
 TRAKr.add_param("-exp", "--export", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
                 action='store_true', default=False)
-TRAKr.add_param("-delDB", "--delete_databases", help="delete all databases and create new ones.", action='store_true', default=False)
+TRAKr.add_param("-delDB", "--delete_databases", help="delete all databases and create new ones.", action='store_true',
+                default=False)
 TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store_true')
 
-#TODO params to add:
+TRAKr.add_param("-l", "--loadfile", type=str, default="", help="loads a pcap file into the database")
+TRAKr.add_param("-lat", "--latitude", type=float, default=0)
+TRAKr.add_param("-long", "--longitude", type=float, default=0)
+
+# TODO params to add:
 #   -i import pcap from file or directory for analysis, remember to ask for lat/long
 
 
@@ -113,7 +117,7 @@ TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store
 if __name__ == '__main__':
     try:
         TRAKr.run()
-        #catch the keyboard interrupt and cleanup half open files
+        # catch the keyboard interrupt and cleanup half open files
     except KeyboardInterrupt:
         print "\nTRAKr - Shutting down...\n"
         __removePcaps()
