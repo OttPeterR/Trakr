@@ -1,5 +1,5 @@
 import ConfigParser
-import DefaultLoader
+import DefaultConfigLoader
 import os
 
 
@@ -26,9 +26,9 @@ class ConfigHelper():
         global configParser
 
         # check if config is missing
-        if not os.path.exists(DefaultLoader.defaultConfigPath):
+        if not os.path.exists(DefaultConfigLoader.defaultConfigPath):
             # create it if needed
-            DefaultLoader.createDefaultConfig()
+            DefaultConfigLoader.createDefaultConfig()
 
         # now that we know it's there, load it up
         self.loadConfig()
@@ -39,12 +39,12 @@ class ConfigHelper():
         global configParser
         global loaded
 
-        configParser.read(DefaultLoader.defaultConfigPath)
+        configParser.read(DefaultConfigLoader.defaultConfigPath)
         loaded = True
         return
 
     def resetConfig(self):
-        DefaultLoader.createDefaultConfig()
+        DefaultConfigLoader.createDefaultConfig()
         loaded = True
 
 
