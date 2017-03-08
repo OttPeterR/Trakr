@@ -1,4 +1,3 @@
-#from scapy.all import sniff
 from subprocess import call
 
 from config import ConfigHelper
