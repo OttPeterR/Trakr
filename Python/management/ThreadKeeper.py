@@ -19,7 +19,7 @@ def wait(seconds):
 def waitForThreads():
     global numThreads
     while numThreads > 0:
-        sleep(1)
+        sleep(0.05)
 
 
 def incrementThreadCount():
