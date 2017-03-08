@@ -10,10 +10,10 @@ from management import ThreadKeeper
 from scanner import Scanner
 
 
+# this is what runs when the command line application is invoked
 @cli.app.CommandLineApp
 def TRAKr(app):
-    ThreadKeeper.incrementThreadCount()
-
+    # loading up the config file parser
     configHelper = ConfigHelper.ConfigHelper()
     configHelper.startUp()
 
@@ -21,34 +21,42 @@ def TRAKr(app):
     if TRAKr.params.reset:
         configHelper.resetConfig()
 
+    # exporting databases
     if TRAKr.params.export:
         DatabaseExporter.exportDatabases()
 
+    # deleting databases
     elif TRAKr.params.delete_databases:
         __deleteDBs()
         __initDBs()
 
-    # handling run parameters
-
+    # handling run-oriented parameters
+    # these are the ones that can go infinitely like scans
     if TRAKr.params.run:
         __run()
     else:
+        # this only scans and puts the MACs into the rolling.db
         if TRAKr.params.scan:
             __scan(True)
 
+        # load up a file, lat/long will be 0 as default if not inputted
         if TRAKr.params.loadfile != "":
             __loadFile(TRAKr.params.loadfile, TRAKr.params.latitude, TRAKr.params.longitude)
 
+        # run analysis on rolling.db
         if TRAKr.params.analyze:
             __analyze()
 
-    ThreadKeeper.decrementThreadCount()
+    # wait just a little bit, because sometimes it'll race condition and go past this
     ThreadKeeper.wait(0.01)
+
+    # don't stop execution just yet, because scan or analysis may be running
     ThreadKeeper.waitForThreads()
     # print("[TRAKr] - Shutting Down")
 
 
 # Helper functions to do the things
+
 
 def __scan(loadToDabatase):
     # root check
@@ -65,29 +73,37 @@ def __scan(loadToDabatase):
 
 def __analyze():
     __initDBs()
-    # call analysis to process the folder of stuff
+    # call analysis to process the folder of databases
+    # also look for a subfolder called importme - that will contain other
+    #   rolling.db that need to be consolidated into one big one
     return
 
 
+# all-in-one solution for doing everything
 def __run():
     __initDBs()
     __scan(True)  # while running a single instance, scan will call it's own analysis
+    __analyze()
     return
 
 
+# loads a pcap file into the rolling.db
 def __loadFile(path, latitude, longitude):
     print "Loading " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")"
     Extractor.ExtractFromFile(path, latitude, longitude, False)
 
 
+# it's okay to call this multiple times, it just makes sure that everything is there
 def __initDBs():
     DatabaseInit.initDBs()
 
 
+# removes database files, does not recreate them
 def __deleteDBs():
     DatabaseInit.deleteDBs()
 
 
+# deletes all pcap files in the folder, this is a little dangerous
 def __removePcaps():
     # http://stackoverflow.com/questions/1995373/
     path = str(ConfigHelper.getCaptureDirectory())
