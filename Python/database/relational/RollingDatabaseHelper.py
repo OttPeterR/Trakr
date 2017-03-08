@@ -1,6 +1,6 @@
 from config import ConfigHelper
 import sqlite3
-
+from database.PrivacyUtility import hash
 
 def init():
     global connection
@@ -13,7 +13,7 @@ def loadPacket(o):
     #the type of packet is Observation
     connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) \
                             VALUES ("
-                                " '"+str(o.mac)+"' , "
+                                " '"+str(hash(o.mac))+"' , "
                                 +str(o.time)+", "
                                 +str(o.lat)+", "
                                 +str(o.long)+" )")
