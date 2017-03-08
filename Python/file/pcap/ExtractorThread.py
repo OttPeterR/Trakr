@@ -58,11 +58,8 @@ def getUniqueMACs(observations):
     BehaviorDatabaseHelper.commit()
     BehaviorDatabaseHelper.close()
 
-    print "new unique: " + str(newUnique)
+    print "new unique devices: " + str(newUnique)
     return
-
-
-
 
 
 
