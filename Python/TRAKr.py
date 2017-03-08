@@ -12,21 +12,16 @@ from scanner import Scanner
 @cli.app.CommandLineApp
 def TRAKr(app):
 
-
-    #print "[TRAKr] - Starting Up"
-    # make sure the settings are all loaded up and good
+    ThreadKeeper.incrementThreadCount()
 
     configHelper = ConfigHelper.ConfigHelper()
     configHelper.startUp()
-
-    needToWait = False
 
     # handling pre-run parameters first
     if TRAKr.params.reset:
         configHelper.resetConfig()
 
-    if TRAKr.params.export_databases:
-        needToWait = True
+    if TRAKr.params.export:
         DatabaseExporter.exportDatabases()
 
     elif TRAKr.params.delete_databases:
@@ -41,20 +36,17 @@ def TRAKr(app):
         __run()
     else:
         if TRAKr.params.scan:
-            needToWait = True
             __scan(True)
+
+        #if TRAKr.params.loadfile:
+        #    __loadFile(path)
+
 
         if TRAKr.params.analyze:
             __analyze()
 
-
-
-    #done with all the parameters, now we just finish up
-
-    if needToWait:
-        # giving the params a chance to start their threads
-        ThreadKeeper.wait(3)
-
+    ThreadKeeper.decrementThreadCount()
+    ThreadKeeper.wait(0.01)
     ThreadKeeper.waitForThreads()
     #print("[TRAKr] - Shutting Down")
 
@@ -62,15 +54,15 @@ def TRAKr(app):
 
 # Helper functions to do the things
 
-def __scan(alsoAnalyze):
+def __scan(loadToDabatase):
     # root check
     if os.geteuid() == 0:
         # we're good to go, let's scan, this will loop infinitely
         __initDBs()
-        Scanner.beginScan(alsoAnalyze)
+        Scanner.beginScan(loadToDabatase)
     else:
         # sucks. no scanning today
-        print "Please run as root to capture packets. Exiting..."
+        print "Please run as root to capture packets."
         os._exit(0)
     return
 
@@ -83,6 +75,10 @@ def __run():
     __initDBs()
     __scan(True) #while running a single instance, scan will call it's own analysis
     return
+
+
+
+#def __loadFile(path):
 
 
 def __initDBs():
@@ -101,9 +97,9 @@ def __removePcaps():
 TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
                 action='store_true')
 TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
-TRAKr.add_param("","",help="loads a pcap file into the database and runs analysis")
+#TRAKr.add_param("-l","--loadfile",help="loads a pcap file into the database", action='store_true')
 TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
-TRAKr.add_param("-db", "--export_databases", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
+TRAKr.add_param("-exp", "--export", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
                 action='store_true', default=False)
 TRAKr.add_param("-delDB", "--delete_databases", help="delete all databases and create new ones.", action='store_true', default=False)
 TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store_true')
