@@ -1,6 +1,8 @@
 import thread
+
+from management import ThreadKeeper
 from scanner import ScannerThread
-import ThreadKeeper
+
 
 def start(alsoAnalyze):
 

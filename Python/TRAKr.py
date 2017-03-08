@@ -1,12 +1,12 @@
-import cli.app
 import os
-import SystemEvents
 
-import ThreadKeeper
-from scanner import Scanner
+import cli.app
+
 from config import ConfigHelper
 from database import DatabaseExporter
 from database import DatabaseInit
+from management import ThreadKeeper
+from scanner import Scanner
 
 
 @cli.app.CommandLineApp
@@ -101,6 +101,7 @@ def __removePcaps():
 TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
                 action='store_true')
 TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
+TRAKr.add_param("","",help="loads a pcap file into the database and runs analysis")
 TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
 TRAKr.add_param("-db", "--export_databases", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
                 action='store_true', default=False)

@@ -1,11 +1,12 @@
-from scapy.all import *
 from subprocess import call
 
-from database.relational import RollingDatabaseHelper
-from database.relational import BehaviorDatabaseHelper
-from config.ConfigHelper import getKeepAllPcaps
-import ThreadKeeper
+from scapy.all import *
+
 import Observation
+from config.ConfigHelper import getKeepAllPcaps
+from database.relational import BehaviorDatabaseHelper
+from database.relational import RollingDatabaseHelper
+from management import ThreadKeeper
 
 
 def extract(filePath, lat=0, long=0):

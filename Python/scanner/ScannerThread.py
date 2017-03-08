@@ -1,9 +1,9 @@
 #from scapy.all import sniff
 from subprocess import call
 
-import ThreadKeeper
 from config import ConfigHelper
 from file.pcap import Extractor
+from management import ThreadKeeper
 
 
 def scanLoop(alsoAnalyze, lat=0, long=0):
@@ -20,7 +20,7 @@ def scan():
     captureInterface = str(ConfigHelper.getWirelessCaptureInterface())
     captureDuration = str(ConfigHelper.getCaptureDuration())
 
-    capturePath = str(ConfigHelper.getCaptureDirectory())+ \
+    capturePath = str(ConfigHelper.getCaptureDirectory()) + \
                   ThreadKeeper.getTimeStamp() + \
                   "-unprocessed.pcap"
 
