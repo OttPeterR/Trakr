@@ -8,17 +8,17 @@ from database.relational import BehaviorDatabaseHelper
 from database.relational import RollingDatabaseHelper
 from management import ThreadKeeper
 
+def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
-def extract(filePath, lat=0, long=0):
     ThreadKeeper.incrementThreadCount()
 
     packets = rdpcap(filePath)
 
-    __handleOldPcapFile(filePath)
+    __handleOldPcapFile(filePath, allowDeletion)
 
     observations = []
     for packet in packets:
-        observations += [Observation.makeObservation(packet)]
+        observations += [Observation.makeObservation(packet, latitude, longitude)]
 
     loadObservations(observations)
     getUniqueMACs(observations)
@@ -74,8 +74,9 @@ def __renamePcap(filePath):
 def __deletePcap(filePath):
     call(["rm", filePath])
 
-def __handleOldPcapFile(filePath):
+def __handleOldPcapFile(filePath, allowDeletion):
     if getKeepAllPcaps():
         __renamePcap(filePath)
     else:
-        __deletePcap(filePath)
+        if allowDeletion:
+            __deletePcap(filePath)
