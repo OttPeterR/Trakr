@@ -4,6 +4,7 @@ import cli.app
 
 from config import ConfigHelper
 from database import DatabaseExporter
+from file.pcap import Extractor
 from database import DatabaseInit
 from management import ThreadKeeper
 from scanner import Scanner
@@ -39,7 +40,7 @@ def TRAKr(app):
             __scan(True)
 
         #if TRAKr.params.loadfile:
-        #    __loadFile(path)
+        #    __loadFile(path, lat, long)
 
 
         if TRAKr.params.analyze:
@@ -78,8 +79,8 @@ def __run():
 
 
 
-#def __loadFile(path):
-
+def __loadFile(path, latitude, longitude):
+    Extractor.ExtractFromFile(path, latitude, longitude)
 
 def __initDBs():
     DatabaseInit.initDBs()
