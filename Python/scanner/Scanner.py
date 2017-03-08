@@ -7,8 +7,8 @@ from scanner import ScannerThread
 def start(loadToDabatase):
 
     ThreadKeeper.incrementThreadCount()
-    lat = raw_input("  Please input Latitude:")
-    long = raw_input("  Please input Longitude:")
+    lat =  raw_input("  Please input Latitude:  ")
+    long = raw_input("  Please input Longitude: ")
     ScannerThread.scanLoop(loadToDabatase, lat, long)
     ThreadKeeper.decrementThreadCount()
 
