@@ -6,10 +6,10 @@ from file.pcap import Extractor
 from management import ThreadKeeper
 
 
-def scanLoop(alsoAnalyze, lat=0, long=0):
+def scanLoop(loadToDabatase, lat=0, long=0):
     while True:
         pcapPath = scan()
-        if alsoAnalyze:
+        if loadToDabatase:
             Extractor.ExtractFromFile(pcapPath, lat, long)
 
 
