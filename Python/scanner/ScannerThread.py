@@ -29,7 +29,7 @@ def scan():
         call(["touch", capturePath])
         call(["chmod", "777", capturePath])
     except Exception, errmsg:
-        print "Could not change output file permissions, you'll need root permissions to delete it now, sorry about that..."
+        print "Could not change output file permissions, you might need root permissions to delete it now, sorry about that..."
         print errmsg
 
     try:
