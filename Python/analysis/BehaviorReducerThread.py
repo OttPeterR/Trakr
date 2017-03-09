@@ -1,3 +1,4 @@
+from database.relational import RollingDatabaseHelper
 
 def analyze(filePath):
     # parses through the rolling database and makes guesses as to when MACs enter and exit
@@ -12,6 +13,11 @@ def analyze(filePath):
         # reduce the array by taking out all "present" items that are between present items
 
 
-    return
+    uniques = RollingDatabaseHelper.getUniques()
 
+    for u in uniques:
+        continue
+
+
+    return
 
