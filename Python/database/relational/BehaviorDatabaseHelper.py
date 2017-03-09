@@ -33,12 +33,14 @@ def __behavioralDatabaseInit():
     connection.execute("CREATE TABLE IF NOT EXISTS "+str(ConfigHelper.getUniqueTableName())+ "\
                (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);")
 
-    #adding some very common addresses I don't care about
-    #having them at the top of the table will make searching easier
-    #addNewAddress("None")
-    #addNewAddress("error")
-    #addNewAddress("ff:ff:ff:ff:ff:ff")
-    addNewAddress("00:00:00:00:00:00")
+    #adding in the default addresses to the top of the DB
+    default_addresses = ["000000000000", "error", "nothing"]
+    for addr in default_addresses:
+        if ConfigHelper.shouldHash():
+            addNewAddress(PrivacyUtility.hash(addr))
+        else:
+            addNewAddress(addr)
+
 
     commit()
 
@@ -47,10 +49,8 @@ def __behavioralDatabaseInit():
 #False - if there was a problem storing the address
 def addNewAddress(address):
     global connection
-
-    address = processAddress(address)
-
     try:
+
         connection.execute("INSERT INTO "+str(ConfigHelper.getUniqueTableName())+" (ADDRESS) VALUES ('"+address+"')");
 
     except Exception, errmsg:
@@ -60,28 +60,6 @@ def addNewAddress(address):
         #I'll just let it handle uniqueness checking, maybe fix this if it gets slow
         return False
     return True
-
-
-def processAddress(address):
-
-    # convert to just hex
-    newAddress = str(address).replace(':', '').lower()
-
-    # catching the non useful MACs
-    if address == "error" or address == "none" or address == "ffffffffffff" or address == "000000000000":
-        # don't care about these addresses, just zero them out
-        newAddress = "000000000000"
-
-    # hash the MACs for privacy
-    if ConfigHelper.shouldHash():
-        newAddress = PrivacyUtility.hash(newAddress)  # getting the hex version of the hash of the value
-
-    newAddress = str(int(newAddress, 16))  # making the hash back into an int to store in the DB
-
-    return newAddress
-
-
-
 
 def connect():
     global connection
