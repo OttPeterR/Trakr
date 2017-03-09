@@ -13,7 +13,7 @@ def loadPacket(o):
     #the type of packet is Observation
     connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) \
                             VALUES ("
-                                " '"+str(hash(o.mac))+"' , "
+                                " '"+str(o.mac)+"' , "
                                 +str(o.time)+", "
                                 +str(o.lat)+", "
                                 +str(o.long)+" )")
