@@ -26,7 +26,7 @@ def TRAKr(app):
         DatabaseExporter.exportDatabases()
 
     # deleting databases
-    elif TRAKr.params.delete_databases:
+    elif TRAKr.params.deleteDB:
         __deleteDBs()
         __initDBs()
 
@@ -40,8 +40,8 @@ def TRAKr(app):
             __scan(True)
 
         # load up a file, lat/long will be 0 as default if not inputted
-        if TRAKr.params.loadfile != "":
-            __loadFile(TRAKr.params.loadfile, TRAKr.params.latitude, TRAKr.params.longitude)
+        if TRAKr.params.load != "":
+            __loadFile(TRAKr.params.load, TRAKr.params.latitude, TRAKr.params.longitude)
 
         # run analysis on rolling.db
         if TRAKr.params.analyze:
@@ -100,7 +100,10 @@ def __initDBs():
 
 # removes database files, does not recreate them
 def __deleteDBs():
-    DatabaseInit.deleteDBs()
+    answer = raw_input("Are you sure you would like to delete the databases?: (yes/no)\n")
+    if answer.lower() == "yes":
+        DatabaseInit.deleteDBs()
+
 
 
 # deletes all pcap files in the folder, this is a little dangerous
@@ -111,22 +114,19 @@ def __removePcaps():
 
 
 # for operational things, use a parameter that gets set
-TRAKr.add_param("-r", "--run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
+TRAKr.add_param("-run", help="this starts capture and analysis processing all-in-one. Needs root permissions",
                 action='store_true')
-TRAKr.add_param("-s", "--scan", help="begin scanning and saving to the database", action='store_true')
-TRAKr.add_param("-reset", "--reset", help="resets the config file to defaul", action='store_true')
-TRAKr.add_param("-exp", "--export", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
+TRAKr.add_param("-scan", help="begin scanning and saving to the database", action='store_true')
+TRAKr.add_param("-reset", help="resets the config file to defaul", action='store_true')
+TRAKr.add_param("-export", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
                 action='store_true', default=False)
-TRAKr.add_param("-delDB", "--delete_databases", help="delete all databases and create new ones.", action='store_true',
+TRAKr.add_param("-deleteDB", help="delete all databases and create new ones.", action='store_true',
                 default=False)
-TRAKr.add_param("-a", "--analyze", help="run analysis on packets", action='store_true')
+TRAKr.add_param("-analyze", help="run analysis on packets", action='store_true')
 
-TRAKr.add_param("-l", "--loadfile", type=str, default="", help="loads a pcap file into the database")
-TRAKr.add_param("-lat", "--latitude", type=float, default=0)
-TRAKr.add_param("-long", "--longitude", type=float, default=0)
-
-# TODO params to add:
-#   -i import pcap from file or directory for analysis, remember to ask for lat/long
+TRAKr.add_param("-load",  help="loads a pcap file into the database", type=str, default="")
+TRAKr.add_param("-lat", help="latitude  - load or scan parameter", type=float, default=0)
+TRAKr.add_param("-long",help="longitude - load or scan parameter", type=float, default=0)
 
 
 
