@@ -3,6 +3,8 @@ from config import ConfigHelper
 from database import PrivacyUtility
 import sqlite3
 
+get_all_macs = "SELECT ADDRESS FROM %s"
+insert_command = "INSERT INTO %s (ADDRESS) VALUES ('%s')"
 
 def init():
     connect()
@@ -14,7 +16,18 @@ def loadObservation(mac, time, type):
 
     return
 
+def connect():
+    global connection
+    pathToDB = ConfigHelper.getBehaviorDatabasePath()
+    connection = sqlite3.connect(pathToDB)
 
+def commit():
+    global connection
+    connection.commit()
+
+def close():
+    global connection
+    connection.close()
 
 #this makes the database if it does not exist
 def __behavioralDatabaseInit():
@@ -50,26 +63,21 @@ def __behavioralDatabaseInit():
 def addNewAddress(address):
     global connection
     try:
-
-        connection.execute("INSERT INTO "+str(ConfigHelper.getUniqueTableName())+" (ADDRESS) VALUES ('"+address+"')");
-
+        connection.execute(insert_command % (str(ConfigHelper.getUniqueTableName()), address))
     except Exception, errmsg:
         #print "New MAC address not inserted, was not unique"
         #print errmsg
-
         #I'll just let it handle uniqueness checking, maybe fix this if it gets slow
         return False
     return True
 
-def connect():
-    global connection
-    pathToDB = ConfigHelper.getBehaviorDatabasePath()
-    connection = sqlite3.connect(pathToDB)
 
-def commit():
+def getUniques():
     global connection
-    connection.commit()
 
-def close():
-    global connection
-    connection.close()
+    cursor = connection.execute(get_all_macs % str(ConfigHelper.getUniqueTableName()))
+    macs = []
+    for c in cursor:
+        macs.append(c[0])
+
+    return macs
