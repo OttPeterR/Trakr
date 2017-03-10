@@ -1,6 +1,8 @@
 from config import ConfigHelper
 import sqlite3
 
+get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS!=\"%s\""
+get_observations_between_times = "SELECT * FROM OBSERVATION WHERE TIME>=%s AND TIME<=%s"
 
 def init():
     global connection
@@ -8,15 +10,27 @@ def init():
     connect()
     __rollingDatabaseInit()
 
+def connect():
+    global connection
+    pathToDB = ConfigHelper.getRollingDatabasePath()
+    connection = sqlite3.connect(pathToDB)
+
+def commit():
+    global connection
+    connection.commit()
+
+def close():
+    global connection
+    connection.close()
+
 def loadPacket(o):
     global connection
     #the type of packet is Observation
-    connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) \
-                            VALUES ("
-                                " '"+str(o.mac)+"' , "
+    connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) VALUES ("+
+                                "'"+str(o.mac)+"', "
                                 +str(o.time)+", "
                                 +str(o.lat)+", "
-                                +str(o.long)+" )")
+                                +str(o.long)+")")
 
 
     return True
@@ -36,15 +50,10 @@ def __rollingDatabaseInit():
     commit()
 
 
-def connect():
+def getObservationsOfAddress(address):
     global connection
-    pathToDB = ConfigHelper.getRollingDatabasePath()
-    connection = sqlite3.connect(pathToDB)
-
-def commit():
-    global connection
-    connection.commit()
-
-def close():
-    global connection
-    connection.close()
+    cursor = connection.execute(get_observations_of_address % address)
+    obs = []
+    for c in cursor:
+        obs.append((c[0], c[1], c[2], c[3]))
+    return obs
