@@ -16,6 +16,8 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
     __handleOldPcapFile(filePath, allowDeletion)
 
+    latitude, longitude = __fixLatLong(latitude, longitude)
+
     observations = []
     for packet in packets:
         observations += [Observation.makeObservation(packet, latitude, longitude)]
@@ -25,6 +27,18 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
     ThreadKeeper.decrementThreadCount()
     return
+
+def __fixLatLong(latitude, longitude):
+    try:
+        latitude = int(latitude)
+    except ValueError:
+        latitude = 0
+
+    try:
+        longitude = int(longitude)
+    except ValueError:
+        longitude = 0
+    return latitude, longitude
 
 
 def loadObservations(observations):
