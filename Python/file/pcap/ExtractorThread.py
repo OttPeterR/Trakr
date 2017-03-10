@@ -22,8 +22,15 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     for packet in packets:
         observations += [Observation.makeObservation(packet, latitude, longitude)]
 
-    loadObservations(observations)
-    getUniqueMACs(observations)
+
+    roll_conn = RollingDatabaseHelper.connect()
+    beha_conn = BehaviorDatabaseHelper.connect()
+
+    loadObservations(roll_conn, observations)
+    getUniqueMACs(beha_conn, observations)
+
+    roll_conn.close()
+    beha_conn.close()
 
     ThreadKeeper.decrementThreadCount()
     return
@@ -41,36 +48,28 @@ def __fixLatLong(latitude, longitude):
     return latitude, longitude
 
 
-def loadObservations(observations):
-    RollingDatabaseHelper.connect()
+def loadObservations(connection, observations):
     for o in observations:
-        RollingDatabaseHelper.loadPacket(o)
-
-    RollingDatabaseHelper.commit()
-    RollingDatabaseHelper.close()
+        RollingDatabaseHelper.loadPacket(connection, o)
+    connection.commit()
     return
 
 
 
 
-def getUniqueMACs(observations):
+def getUniqueMACs(connection, observations):
     ind = 0
     newUnique = 0
     dict = {} #dictionary of unique MAC addresses
     address = ""
 
-    BehaviorDatabaseHelper.connect()
-
     for o in observations:
         # is this a new mac address?
         if o.mac not in dict:
             dict[o.mac] = ind
-            if BehaviorDatabaseHelper.addNewAddress(o.mac):
+            if BehaviorDatabaseHelper.addNewAddress(connection, o.mac):
                 newUnique = newUnique+1
             ind = ind + 1
-
-    BehaviorDatabaseHelper.commit()
-    BehaviorDatabaseHelper.close()
 
     print "new unique devices: " + str(newUnique)
     return

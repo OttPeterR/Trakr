@@ -5,26 +5,21 @@ get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS==\"%s\""
 get_observations_between_times = "SELECT * FROM OBSERVATION WHERE TIME>=%s AND TIME<=%s"
 
 def init():
-    global connection
-
-    connect()
-    __rollingDatabaseInit()
+    conn = connect()
+    __rollingDatabaseInit(conn)
 
 def connect():
-    global connection
     pathToDB = ConfigHelper.getRollingDatabasePath()
     connection = sqlite3.connect(pathToDB)
+    return connection
 
-def commit():
-    global connection
+def commit(connection):
     connection.commit()
 
-def close():
-    global connection
+def close(connection):
     connection.close()
 
-def loadPacket(o):
-    global connection
+def loadPacket(connection, o):
     #the type of packet is Observation
     connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) VALUES ("+
                                 "'"+str(o.mac)+"', "
@@ -32,14 +27,11 @@ def loadPacket(o):
                                 +str(o.lat)+", "
                                 +str(o.long)+")")
 
-
     return True
 
 
 #this makes the database if it does not exist
-def __rollingDatabaseInit():
-    global connection
-
+def __rollingDatabaseInit(connection):
     #(ID INT PRIMARY KEY     NOT NULL, \
 
     connection.execute("CREATE TABLE IF NOT EXISTS OBSERVATIONS \
@@ -47,11 +39,10 @@ def __rollingDatabaseInit():
            TIME            DOUBLE  NOT NULL, \
            LAT             DOUBLE  NOT NULL, \
            LONG            DOUBLE  NOT NULL);")
-    commit()
+    connection.commit()
 
 
-def getObservationsOfAddress(address):
-    global connection
+def getObservationsOfAddress(connection, address):
     cursor = connection.execute(get_observations_of_address % address)
     obs = []
     for c in cursor:
