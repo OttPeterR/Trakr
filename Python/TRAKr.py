@@ -41,7 +41,7 @@ def TRAKr(app):
 
         # load up a file, lat/long will be 0 as default if not inputted
         if TRAKr.params.load != "":
-            __loadFile(TRAKr.params.load, TRAKr.params.latitude, TRAKr.params.longitude)
+            __loadFile(TRAKr.params.load, TRAKr.params.lat, TRAKr.params.long)
 
         # run analysis on rolling.db
         if TRAKr.params.analyze:
