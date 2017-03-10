@@ -1,7 +1,7 @@
 from config import ConfigHelper
 import sqlite3
 
-get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS!=\"%s\""
+get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS==\"%s\""
 get_observations_between_times = "SELECT * FROM OBSERVATION WHERE TIME>=%s AND TIME<=%s"
 
 def init():
@@ -56,4 +56,5 @@ def getObservationsOfAddress(address):
     obs = []
     for c in cursor:
         obs.append((c[0], c[1], c[2], c[3]))
+
     return obs
