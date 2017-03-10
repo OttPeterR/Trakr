@@ -22,15 +22,3 @@ def analyze():
         observations = RollingDatabaseHelper.getObservationsOfAddress(u)
         # now loop through observations and see when they come and go
     return
-
-
-def test():
-    ConfigHelper.ConfigHelper().startUp()
-    RollingDatabaseHelper.connect()
-    BehaviorDatabaseHelper.connect()
-    analyze()
-    RollingDatabaseHelper.close()
-    BehaviorDatabaseHelper.close()
-
-
-test()
