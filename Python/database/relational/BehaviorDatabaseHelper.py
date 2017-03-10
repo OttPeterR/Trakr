@@ -37,7 +37,7 @@ def __behavioralDatabaseInit():
     connection.execute("CREATE TABLE IF NOT EXISTS "+str(ConfigHelper.getReducedTableName())+" \
                (ID INT PRIMARY KEY     NOT NULL, \
                ADDRESS         TEXT    NOT NULL, \
-               TIME            INT     NOT NULL, \
+               TIME            DOUBLE  NOT NULL, \
                TYPE            SHORT   NOT NULL, \
                LAT             DOUBLE  NOT NULL, \
                LONG            DOUBLE  NOT NULL);")
@@ -45,16 +45,6 @@ def __behavioralDatabaseInit():
     #making table to hold all unique MACs
     connection.execute("CREATE TABLE IF NOT EXISTS "+str(ConfigHelper.getUniqueTableName())+ "\
                (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);")
-
-    #adding in the default addresses to the top of the DB
-    default_addresses = ["000000000000", "error", "nothing"]
-    for addr in default_addresses:
-        if ConfigHelper.shouldHash():
-            addNewAddress(PrivacyUtility.hash(addr))
-        else:
-            addNewAddress(addr)
-
-
     commit()
 
 
