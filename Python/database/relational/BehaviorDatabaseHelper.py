@@ -3,6 +3,18 @@ from config import ConfigHelper
 from database import PrivacyUtility
 import sqlite3
 
+create_reduced_db = "CREATE TABLE IF NOT EXISTS %s \
+               (ID INT PRIMARY KEY     NOT NULL, \
+               ADDRESS         TEXT    NOT NULL, \
+               TIME            DOUBLE  NOT NULL, \
+               TYPE            SHORT   NOT NULL, \
+               LAT             DOUBLE  NOT NULL, \
+               LONG            DOUBLE  NOT NULL);"
+
+create_behavior_db = "CREATE TABLE IF NOT EXISTS %s\
+               (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);"
+
+
 get_all_macs = "SELECT ADDRESS FROM %s"
 insert_command = "INSERT INTO %s (ADDRESS) VALUES ('%s')"
 
@@ -34,17 +46,10 @@ def __behavioralDatabaseInit():
     global connection
 
     #making table for the behaviors of when they enter and exit
-    connection.execute("CREATE TABLE IF NOT EXISTS "+str(ConfigHelper.getReducedTableName())+" \
-               (ID INT PRIMARY KEY     NOT NULL, \
-               ADDRESS         TEXT    NOT NULL, \
-               TIME            DOUBLE  NOT NULL, \
-               TYPE            SHORT   NOT NULL, \
-               LAT             DOUBLE  NOT NULL, \
-               LONG            DOUBLE  NOT NULL);")
+    connection.execute(create_reduced_db % ConfigHelper.getReducedTableName())
 
     #making table to hold all unique MACs
-    connection.execute("CREATE TABLE IF NOT EXISTS "+str(ConfigHelper.getUniqueTableName())+ "\
-               (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);")
+    connection.execute(create_behavior_db % ConfigHelper.getUniqueTableName())
     commit()
 
 
