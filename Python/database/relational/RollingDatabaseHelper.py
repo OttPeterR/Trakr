@@ -1,6 +1,6 @@
 from config import ConfigHelper
 import sqlite3
-from database.PrivacyUtility import hash
+
 
 def init():
     global connection
@@ -34,6 +34,7 @@ def __rollingDatabaseInit():
            LAT             DOUBLE  NOT NULL, \
            LONG            DOUBLE  NOT NULL);")
     commit()
+
 
 def connect():
     global connection
