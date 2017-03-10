@@ -1,6 +1,8 @@
 from database.relational import RollingDatabaseHelper
+from database.relational import BehaviorDatabaseHelper
+from config import ConfigHelper
 
-def analyze(filePath):
+def analyze():
     # parses through the rolling database and makes guesses as to when MACs enter and exit
     # after computation, it gives its data to the BehaviorDatabase to insert it into the DB
 
@@ -13,11 +15,12 @@ def analyze(filePath):
         # reduce the array by taking out all "present" items that are between present items
 
 
-    uniques = RollingDatabaseHelper.getUniques()
+    uniques = BehaviorDatabaseHelper.getUniques()
 
+    observations = []
+    print len(uniques)
     for u in uniques:
-        continue
-
-
+        observations = RollingDatabaseHelper.getObservationsOfAddress(u)
+        print observations
+        return
     return
-
