@@ -56,9 +56,6 @@ def __processAddress(address):
 
     # hash the MACs for privacy
     if ConfigHelper.shouldHash():
-        newAddress = PrivacyUtility.hash(newAddress)  # getting the hex version of the hash of the value
-
-    newAddress = str(int(newAddress, 16))  # making the hash back into an int to store in the DB
-
+        newAddress = PrivacyUtility.getHashString(newAddress)  # getting the hex version of the hash of the value
     return newAddress
 
