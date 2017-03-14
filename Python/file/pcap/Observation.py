@@ -1,12 +1,13 @@
-from config import ConfigHelper
-from database import PrivacyUtility
-
-bad_addresses = ["", "error", "none", "ffffffffffff", "000000000000"]
 blank_address = "000000000000"
+broadcast_address = "ffffffffffff"
 ethernet = "Ethernet"
 radiotap_dummy = "RadioTap dummy"
 error = "error"
 unknown = "unknown"
+none = "none"
+blank = ""
+bad_addresses = [blank, error, none, unknown, broadcast_address, blank_address]
+
 
 class Observation:
     time = 0.0
@@ -36,26 +37,9 @@ def __getTransmissionAddress(packet):
             return error
     else:
         return unknown
-    return __processAddress(address)
+    return address
 
 #UNIX time in seconds
 def __getTime(packet):
     return packet.time
-
-
-
-def __processAddress(address):
-
-    # convert to just hex
-    newAddress = str(address).replace(':', '').lower()
-
-    # catching the non useful MACs
-    if address in bad_addresses:
-        # don't care about these addresses, just zero them out
-        newAddress = blank_address
-
-    # hash the MACs for privacy
-    if ConfigHelper.shouldHash():
-        newAddress = PrivacyUtility.getHashString(newAddress)  # getting the hex version of the hash of the value
-    return newAddress
 
