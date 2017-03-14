@@ -1,8 +1,8 @@
 import sqlite3
 
 from config import ConfigHelper
-from database import PrivacyUtility
 from file.pcap import Observation
+from database import PrivacyUtility
 
 create_reduced_db = "CREATE TABLE IF NOT EXISTS %s \
                (ID INT PRIMARY KEY     NOT NULL, \
@@ -62,7 +62,7 @@ def __addPresetAddresses(connection):
 #False - if there was a problem storing the address
 def addNewAddress(connection, address):
     try:
-        address = __processAddress(address)
+        address = PrivacyUtility.processAddress(address)
         connection.execute(insert_command % (str(ConfigHelper.getUniqueTableName()), address))
         connection.commit()
     except Exception, errmsg:
@@ -71,17 +71,6 @@ def addNewAddress(connection, address):
         #I'll just let it handle uniqueness checking, maybe fix this if it gets slow
         return False
     return True
-
-def __processAddress(address):
-
-    # convert to just hex
-    address = str(address).replace(':', '').lower()
-
-
-    # hash the MACs for privacy
-    if ConfigHelper.shouldHash():
-        address = PrivacyUtility.getHashString(address)  # getting the hex version of the hash of the value
-    return address
 
 
 def getUniques(connection):

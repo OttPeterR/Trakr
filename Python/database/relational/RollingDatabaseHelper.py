@@ -1,8 +1,11 @@
 from config import ConfigHelper
 import sqlite3
+from database import PrivacyUtility
 
 get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS==\"%s\""
 get_observations_between_times = "SELECT * FROM OBSERVATION WHERE TIME>=%s AND TIME<=%s"
+insert_command = "INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) VALUES ('%s', %s, %s, %s)"
+
 
 def init():
     conn = connect()
@@ -21,12 +24,8 @@ def close(connection):
 
 def loadPacket(connection, o):
     #the type of packet is Observation
-    connection.execute("INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) VALUES ("+
-                                "'"+str(o.mac)+"', "
-                                +str(o.time)+", "
-                                +str(o.lat)+", "
-                                +str(o.long)+")")
-
+    addr = PrivacyUtility.processAddress(o.mac)
+    connection.execute(insert_command % (addr, str(o.time), str(o.lat), str(o.long)))
     return True
 
 

@@ -42,4 +42,3 @@ def __getTransmissionAddress(packet):
 #UNIX time in seconds
 def __getTime(packet):
     return packet.time
-
