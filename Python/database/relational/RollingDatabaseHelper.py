@@ -2,6 +2,11 @@ from config import ConfigHelper
 import sqlite3
 from database import PrivacyUtility
 
+rolling_table_creation = "CREATE TABLE IF NOT EXISTS OBSERVATIONS \
+           (ADDRESS        TEXT    NOT NULL, \
+           TIME            DOUBLE  NOT NULL, \
+           LAT             DOUBLE  NOT NULL, \
+           LONG            DOUBLE  NOT NULL);"
 get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS==\"%s\""
 get_observations_between_times = "SELECT * FROM OBSERVATION WHERE TIME>=%s AND TIME<=%s"
 insert_command = "INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) VALUES ('%s', %s, %s, %s)"
@@ -33,11 +38,7 @@ def loadPacket(connection, o):
 def __rollingDatabaseInit(connection):
     #(ID INT PRIMARY KEY     NOT NULL, \
 
-    connection.execute("CREATE TABLE IF NOT EXISTS OBSERVATIONS \
-           (ADDRESS        TEXT    NOT NULL, \
-           TIME            DOUBLE  NOT NULL, \
-           LAT             DOUBLE  NOT NULL, \
-           LONG            DOUBLE  NOT NULL);")
+    connection.execute(rolling_table_creation)
     connection.commit()
 
 
