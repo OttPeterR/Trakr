@@ -99,6 +99,8 @@ def getReducedTableName():
 def getUniqueTableName():
     return configParser.get("db", "unqiue_table_name")
 
+def getUserCountTableName():
+    return configParser.get("db", "user_count_table_name")
 
 def getGraphDatabasePath():
     return configParser.get("db", "graph_path")

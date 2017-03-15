@@ -23,6 +23,7 @@ def createDefaultConfig():
     config.set("db", "rolling_path", (fullPath + "/runtime/db/rolling.db"))
     config.set("db", "behavior_path", (fullPath + "/runtime/db/behavior.db"))
     config.set("db", "reduced_table_name", "REDUCED")
+    config.set("db", "user_count_table_name", "USER_COUNT")
     config.set("db", "unqiue_table_name", "UNIQUEMACS")
     config.set("db", "rolling_table_name", "ROLLING")
 
@@ -42,7 +43,7 @@ def createDefaultConfig():
     # analysis section
     config.add_section("analysis")
     config.set("analysis", "exit_seconds", 60*45) # 45 minutes
-    config.set("analysis", "enter_period_seconds", 60*6) # 6 minutes
+    config.set("analysis", "enter_period_seconds", 60*5) # 6 minutes
 
     # enter_period_second will be divided into enter_subperiod groups
     # and there must be at least one wifi observation in each of those
