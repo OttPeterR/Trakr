@@ -1,6 +1,7 @@
 from config import ConfigHelper
 import sqlite3
 from database import PrivacyUtility
+from file.pcap import Observation
 
 rolling_table_creation = "CREATE TABLE IF NOT EXISTS OBSERVATIONS \
            (ADDRESS        TEXT    NOT NULL, \
@@ -46,6 +47,6 @@ def getObservationsOfAddress(connection, address):
     cursor = connection.execute(get_observations_of_address % address)
     obs = []
     for c in cursor:
-        obs.append((c[0], c[1], c[2], c[3]))
+        obs.append(Observation.Observation(int(c[0]), c[1], int(c[2]), int(c[3])))
 
     return obs
