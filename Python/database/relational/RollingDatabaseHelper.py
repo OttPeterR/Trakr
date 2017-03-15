@@ -47,6 +47,6 @@ def getObservationsOfAddress(connection, address):
     cursor = connection.execute(get_observations_of_address % address)
     obs = []
     for c in cursor:
-        obs.append(Observation.Observation(int(c[0]), c[1], int(c[2]), int(c[3])))
+        obs.append(Observation.Observation(int(c[1]), c[0], int(c[2]), int(c[3])))
 
     return obs
