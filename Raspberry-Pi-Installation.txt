@@ -1,0 +1,51 @@
+Raspberry Pi Installation
+
+thing you'll need:
+
+	Raspberry Pi
+	Micro USB Power Supply for Pi
+	Micro SD Card
+		and a way to image the Micro SD Card
+	External WiFi Adapter 
+		with Monitor Mode Capabilities
+	
+
+
+image it with something linux, I just did the default Raspbian - Jessie
+
+
+Install tshark
+	
+	sudo apt-get install tshark
+
+Install Scapy and its dependency tcpdump
+
+	sudo apt-get install scapy
+	sudo apt-get install tcpdump
+
+Install some other things we need for Python
+
+	sudo apt-get -y install python-pip
+	sudo pip install pyCLI
+
+
+Put TRAKr in a directory
+cd into it
+
+before you run it, you might want to tweak some of the settings in the
+trakr.ini file. Most importantly, the wireless interface. There's a
+good chance that your wifi module is wlan1 instead of the default en0
+
+Run TRAKr
+
+	This will do everything for you all in one command:
+	Scan, analysze, save to database.
+
+	sudo python TRAKr.py -run
+
+Get your juicy analytics:
+
+	A second instance of TRAKr may be run if one is already scanning.
+	This second isntance will interface with the database and get
+	your metrics from it. Most of its output will save as a .csv file
+	which is compatible with most spreadsheet programs like Excel
