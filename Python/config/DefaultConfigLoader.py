@@ -37,14 +37,8 @@ def createDefaultConfig():
 
     # analysis section
     config.add_section("analysis")
-    config.set("analysis", "exit_seconds", 60*45) # 45 minutes
-    config.set("analysis", "enter_period_seconds", 60*5) # 6 minutes
-
-    # enter_period_second will be divided into enter_subperiod groups
-    # and there must be at least one wifi observation in each of those
-    # groups to then assume the person has entered and is not just passing by
-    config.set("analysis", "enter_subperiods", 4)
-
+    config.set("analysis", "exit_time", 60*45) # 45 minutes
+    config.set("analysis", "entry_time", 60*5) # 6 minutes
 
 
     config.write(file)

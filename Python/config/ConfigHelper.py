@@ -92,6 +92,15 @@ def getBehaviorDatabasePath():
 def getGraphDatabasePath():
     return configParser.get("db", "graph_path")
 
-
 def shouldHash():
     return configParser.getboolean("db", "hash_values")
+
+
+    # analysis
+
+def getEntryTime():
+    return configParser.get("analysis", "entry_time")
+
+def getExitTime():
+    return configParser.get("analysis", "exit_time")
+
