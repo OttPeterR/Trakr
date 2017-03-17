@@ -6,7 +6,7 @@ from file.pcap import Observation
 table = "OBSERVATIONS"
 rolling_table_creation = "CREATE TABLE IF NOT EXISTS "+table+" \
            (ADDRESS        TEXT    NOT NULL, \
-           TIME            DOUBLE  NOT NULL, \
+           TIME            INT  NOT NULL, \
            LAT             DOUBLE  NOT NULL, \
            LONG            DOUBLE  NOT NULL);"
 get_observations_of_address = "SELECT * FROM "+table+" WHERE ADDRESS==\"%s\""

@@ -12,14 +12,14 @@ table_usercount = "USERCOUNT"
 create_reduced_db = "CREATE TABLE IF NOT EXISTS "+table_reduced+" \
                (ID INT PRIMARY KEY     NOT NULL, \
                ADDRESS         TEXT    NOT NULL, \
-               TIME            DOUBLE  NOT NULL, \
+               TIME            INT  NOT NULL, \
                TYPE            SHORT   NOT NULL, \
                LAT             DOUBLE  NOT NULL, \
                LONG            DOUBLE  NOT NULL);"
 create_unique_db = "CREATE TABLE IF NOT EXISTS "+table_unique+"\
                (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);"
 create_usercount_db = "CREATE TABLE IF NOT EXISTS "+table_usercount+"" \
-                      "(TIME    DOUBLE  NOT NULL," \
+                      "(TIME    INT  NOT NULL," \
                       "NUM_USERS    INT     NOT NULL)"
 
 get_all_macs = "SELECT ADDRESS FROM "+table_unique
