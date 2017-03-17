@@ -27,6 +27,7 @@ def analyze():
     # declaring vars for state tracking
 
     current_state = 0  # the current state of the mac, noticed, present, not present
+    previous_state=0
     begining_observation = 0  # the first notice or the first notice after a declared exit
     # this is the first of the entry markers
     observation_segments = []  # this will hold the markers
@@ -34,19 +35,32 @@ def analyze():
     observations = []
     for u in uniques:
         observations = RollingDatabaseHelper.getObservationsOfAddress(rollingDB, u)
-        if len(observations) > 0:
+        if len(observations) > 1:
 
-            state = __loadState(u)
-            biggest_separation = 0
+            current_state = __loadState(u)
+            previous_state=current_state #TODO fix this, I think I need the previous observation's time
             dist = 0
 
-            # now loop through observations and see when they come and go
+            print u
             for o in range(len(observations) - 1):
                 dist = observations[o + 1].time - observations[o].time
-                if dist > biggest_separation:
-                    biggest_separation = dist
 
-            print "%s %s\t\t%s" % (len(observations), biggest_separation, u)
+                #find what the state is
+
+                if dist > 30:#ConfigHelper.getExitTime():
+                    current_state=state_not_present
+                else:
+                    current_state=state_present
+
+
+                #handle the state
+                if current_state==state_present and previous_state==state_not_present:
+                    print "entered at "+str(observations[o+1].time)
+                elif current_state==state_not_present and previous_state==state_present:
+                    print "exited at "+str(observations[o].time)
+
+
+                previous_state = current_state
 
     behaviorDB.close()
     rollingDB.close()
