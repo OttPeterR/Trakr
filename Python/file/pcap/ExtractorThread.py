@@ -18,15 +18,24 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
     latitude, longitude = __fixLatLong(latitude, longitude)
 
-    observations = []
+    #make a big list to fill
+    #fill it, then see if more room needs to be made
+    array_size = 10000
+    observations = [Observation]*array_size
+    iter = 0
     for packet in packets:
-        observations += [Observation.makeObservation(packet, latitude, longitude)]
+        if iter < array_size:
+            observations[iter] = Observation.makeObservation(packet, latitude, longitude)
+            iter = iter + 1
+        else:
+            observations += [Observation.makeObservation(packet, latitude, longitude)]
 
 
     roll_conn = RollingDatabaseHelper.connect()
     beha_conn = BehaviorDatabaseHelper.connect()
 
-    loadObservations(roll_conn, observations)
+    __loadObservations(roll_conn, observations)
+    RollingDatabaseHelper.removeBadPackets(roll_conn)
     getUniqueMACs(beha_conn, observations)
 
     roll_conn.close()
@@ -48,14 +57,11 @@ def __fixLatLong(latitude, longitude):
     return latitude, longitude
 
 
-def loadObservations(connection, observations):
+def __loadObservations(connection, observations):
     for o in observations:
         RollingDatabaseHelper.loadPacket(connection, o)
     connection.commit()
     return
-
-
-
 
 def getUniqueMACs(connection, observations):
     ind = 0
