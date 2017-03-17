@@ -3,15 +3,16 @@ import sqlite3
 from database import PrivacyUtility
 from file.pcap import Observation
 
-rolling_table_creation = "CREATE TABLE IF NOT EXISTS OBSERVATIONS \
+table = "OBSERVATIONS"
+rolling_table_creation = "CREATE TABLE IF NOT EXISTS "+table+" \
            (ADDRESS        TEXT    NOT NULL, \
            TIME            DOUBLE  NOT NULL, \
            LAT             DOUBLE  NOT NULL, \
            LONG            DOUBLE  NOT NULL);"
-get_observations_of_address = "SELECT * FROM OBSERVATIONS WHERE ADDRESS==\"%s\""
-get_observations_between_times = "SELECT * FROM OBSERVATION WHERE TIME>=%s AND TIME<=%s"
-insert_command = "INSERT INTO OBSERVATIONS (ADDRESS, TIME, LAT, LONG) VALUES ('%s', %s, %s, %s)"
-
+get_observations_of_address = "SELECT * FROM "+table+" WHERE ADDRESS==\"%s\""
+get_observations_between_times = "SELECT * FROM "+table+" WHERE TIME>=%s AND TIME<=%s"
+insert_command = "INSERT INTO "+table+" (ADDRESS, TIME, LAT, LONG) VALUES ('%s', %s, %s, %s)"
+remove_bad_packets = "DELETE FROM "+table+" WHERE ADDRESS == '%s'"
 
 def init():
     conn = connect()
@@ -30,10 +31,18 @@ def close(connection):
 
 def loadPacket(connection, o):
     #the type of packet is Observation
+
     addr = PrivacyUtility.processAddress(o.mac)
     connection.execute(insert_command % (addr, str(o.time), str(o.lat), str(o.long)))
     return True
 
+def removeBadPackets(connection):
+    for bad in Observation.bad_addresses:
+        #might have to hash them if config says so
+        if ConfigHelper.shouldHash():
+            bad = PrivacyUtility.processAddress(bad)
+        connection.execute(remove_bad_packets % bad)
+    connection.commit()
 
 #this makes the database if it does not exist
 def __rollingDatabaseInit(connection):

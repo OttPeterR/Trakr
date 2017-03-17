@@ -4,21 +4,26 @@ from config import ConfigHelper
 from file.pcap import Observation
 from database import PrivacyUtility
 
-create_reduced_db = "CREATE TABLE IF NOT EXISTS %s \
+
+table_reduced = "REDUCED"
+table_unique = "UNIQUEMACS"
+table_usercount = "USERCOUNT"
+
+create_reduced_db = "CREATE TABLE IF NOT EXISTS "+table_reduced+" \
                (ID INT PRIMARY KEY     NOT NULL, \
                ADDRESS         TEXT    NOT NULL, \
                TIME            DOUBLE  NOT NULL, \
                TYPE            SHORT   NOT NULL, \
                LAT             DOUBLE  NOT NULL, \
                LONG            DOUBLE  NOT NULL);"
-create_behavior_db = "CREATE TABLE IF NOT EXISTS %s\
+create_unique_db = "CREATE TABLE IF NOT EXISTS "+table_unique+"\
                (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);"
-create_usercount_db = "CREATE TABLE IF NOT EXISTS %s" \
+create_usercount_db = "CREATE TABLE IF NOT EXISTS "+table_usercount+"" \
                       "(TIME    DOUBLE  NOT NULL," \
                       "NUM_USERS    INT     NOT NULL)"
 
-get_all_macs = "SELECT ADDRESS FROM %s"
-insert_command = "INSERT INTO %s (ADDRESS) VALUES ('%s')"
+get_all_macs = "SELECT ADDRESS FROM "+table_unique
+insert_unique_command = "INSERT INTO "+table_unique+" (ADDRESS) VALUES ('%s')"
 
 
 def init():
@@ -49,11 +54,11 @@ def close(connection):
 # this makes the database if it does not exist
 def __behavioralDatabaseInit(connection):
     # makign table to hold how many users are currently present for an interval
-    connection.execute(create_usercount_db % ConfigHelper.getUserCountTableName())
+    connection.execute(create_usercount_db)
     # making table to hold all unique MACs
-    connection.execute(create_behavior_db % ConfigHelper.getUniqueTableName())
+    connection.execute(create_unique_db)
     # making table for the behaviors of when they enter and exit
-    connection.execute(create_reduced_db % ConfigHelper.getReducedTableName())
+    connection.execute(create_reduced_db)
 
     # adding in the default MACs that are not needed
     __addPresetAddresses(connection)
@@ -72,7 +77,7 @@ def __addPresetAddresses(connection):
 def addNewAddress(connection, address):
     try:
         address = PrivacyUtility.processAddress(address)
-        connection.execute(insert_command % (str(ConfigHelper.getUniqueTableName()), address))
+        connection.execute(insert_unique_command % address)
         connection.commit()
     except Exception, errmsg:
         # print "New MAC address not inserted, was not unique"
@@ -83,7 +88,7 @@ def addNewAddress(connection, address):
 
 
 def getUniques(connection):
-    cursor = connection.execute(get_all_macs % str(ConfigHelper.getUniqueTableName()))
+    cursor = connection.execute(get_all_macs)
     macs = []
     for c in cursor:
         macs.append(c[0])

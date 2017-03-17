@@ -22,11 +22,6 @@ def createDefaultConfig():
     config.add_section("db")
     config.set("db", "rolling_path", (fullPath + "/runtime/db/rolling.db"))
     config.set("db", "behavior_path", (fullPath + "/runtime/db/behavior.db"))
-    config.set("db", "reduced_table_name", "REDUCED")
-    config.set("db", "user_count_table_name", "USER_COUNT")
-    config.set("db", "unqiue_table_name", "UNIQUEMACS")
-    config.set("db", "rolling_table_name", "ROLLING")
-
     config.set("db", "graph_path", (fullPath + "/runtime/db/graph.db"))
     config.set("db", "hash_values", True)
 
