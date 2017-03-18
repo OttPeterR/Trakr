@@ -105,7 +105,6 @@ def __deleteDBs():
         DatabaseInit.deleteDBs()
 
 
-
 # deletes all pcap files in the folder, this is a little dangerous
 def __removePcaps():
     # http://stackoverflow.com/questions/1995373/
@@ -124,11 +123,9 @@ TRAKr.add_param("-deleteDB", help="delete all databases and create new ones.", a
                 default=False)
 TRAKr.add_param("-analyze", help="run analysis on packets", action='store_true')
 
-TRAKr.add_param("-load",  help="loads a pcap file into the database", type=str, default="")
+TRAKr.add_param("-load", help="loads a pcap file into the database", type=str, default="")
 TRAKr.add_param("-lat", help="latitude  - load or scan parameter", type=float, default=0)
-TRAKr.add_param("-long",help="longitude - load or scan parameter", type=float, default=0)
-
-
+TRAKr.add_param("-long", help="longitude - load or scan parameter", type=float, default=0)
 
 if __name__ == '__main__':
     try:
