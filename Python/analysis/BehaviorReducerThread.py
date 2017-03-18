@@ -2,6 +2,7 @@ from database.relational import RollingDatabaseHelper
 from database.relational import BehaviorDatabaseHelper
 from config import ConfigHelper
 
+
 def analyze():
     # parses through the rolling database and makes guesses as to when MACs enter and exit
     # after computation, it gives its data to the BehaviorDatabase to insert it into the DB
@@ -21,7 +22,6 @@ def analyze():
 
     action_notice = BehaviorDatabaseHelper.type_notice
     action_exit = BehaviorDatabaseHelper.type_exit
-
 
     for u in uniques:
         observations = RollingDatabaseHelper.getObservationsOfAddress(rollingDB, u)
@@ -46,11 +46,15 @@ def analyze():
                     observation_actions += [(action_notice, observations[o + 1].time)]
                 elif current_state == action_exit and previous_state == action_notice:
                     observation_actions += [(action_exit, observations[o].time)]
+                    observation_actions += [(action_notice, observations[0+1].time)]
+                    o = o+1
 
                 # make the current state usable for next iteration
                 previous_state = current_state
 
-            if len(observation_actions)>1:
+
+
+            if len(observation_actions) > 1:
                 print u
                 print observation_actions
 
@@ -61,7 +65,7 @@ def analyze():
             # no observations: nothing to do, move along to the next iteration
             continue
 
-        if len(observation_actions)!=0:
+        if len(observation_actions) != 0:
             for oa in observation_actions:
                 BehaviorDatabaseHelper.addBehavior(behaviorDB, u, oa[0], oa[1], 0, 0)
 
@@ -73,6 +77,7 @@ def analyze():
 
 def __loadState(connection, addr):
     return BehaviorDatabaseHelper.getMostRecentStatus(connection, addr)
+
 
 def test():
     ConfigHelper.ConfigHelper().startUp()
