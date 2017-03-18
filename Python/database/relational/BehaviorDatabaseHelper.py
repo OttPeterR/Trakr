@@ -4,26 +4,32 @@ from config import ConfigHelper
 from file.pcap import Observation
 from database import PrivacyUtility
 
-
 table_reduced = "REDUCED"
 table_unique = "UNIQUEMACS"
 table_usercount = "USERCOUNT"
 
-create_reduced_db = "CREATE TABLE IF NOT EXISTS "+table_reduced+" \
-               (ID INT PRIMARY KEY     NOT NULL, \
-               ADDRESS         TEXT    NOT NULL, \
+type_enter = 0b1
+type_exit = 0b0  # also means for "not present" sometimes
+type_notice = 0b10
+
+create_reduced_db = "CREATE TABLE IF NOT EXISTS " + table_reduced + " \
+               (ADDRESS         TEXT    NOT NULL, \
                TIME            LONG  NOT NULL, \
                TYPE            SHORT   NOT NULL, \
                LAT             DOUBLE  NOT NULL, \
                LONG            DOUBLE  NOT NULL);"
-create_unique_db = "CREATE TABLE IF NOT EXISTS "+table_unique+"\
+create_unique_db = "CREATE TABLE IF NOT EXISTS " + table_unique + "\
                (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);"
-create_usercount_db = "CREATE TABLE IF NOT EXISTS "+table_usercount+"" \
-                      "(TIME    LONG  NOT NULL," \
-                      "NUM_USERS    INT     NOT NULL)"
+create_usercount_db = "CREATE TABLE IF NOT EXISTS " + table_usercount + "" \
+                                                                        "(TIME    LONG  NOT NULL," \
+                                                                        "NUM_USERS    INT     NOT NULL)"
+# unique MACs
+get_all_macs = "SELECT ADDRESS FROM " + table_unique
+insert_unique_command = "INSERT INTO " + table_unique + " (ADDRESS) VALUES ('%s')"
 
-get_all_macs = "SELECT ADDRESS FROM "+table_unique
-insert_unique_command = "INSERT INTO "+table_unique+" (ADDRESS) VALUES ('%s')"
+# reduced db commands
+insert_behavior = "INSERT INTO " + table_reduced + "(ADDRESS, TIME, TYPE, LAT, LONG) VALUES ('%s', %s, %s, %s, %s)"
+get_last_observation = "SELECT TYPE FROM (SELECT MAX(TIME), TYPE FROM "+table_reduced+" WHERE ADDRESS=='%s')"
 
 
 def init():
@@ -94,3 +100,15 @@ def getUniques(connection):
         macs.append(c[0])
 
     return macs
+
+
+
+def addBehavior(connection, address, type, time, lat, long):
+    connection.execute(insert_behavior % (address, time, type, lat, long))
+
+def getMostRecentStatus(connection, address):
+    cursor = connection.execute(get_last_observation % address)
+    result = type_exit
+    for c in cursor:
+        result = c[0]
+    return result

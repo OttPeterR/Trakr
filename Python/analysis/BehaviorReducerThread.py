@@ -18,8 +18,10 @@ def analyze():
     rollingDB = RollingDatabaseHelper.connect()
 
     uniques = BehaviorDatabaseHelper.getUniques(behaviorDB)
-    action_notice = 0b1
-    action_exit = 0b0
+
+    action_notice = BehaviorDatabaseHelper.type_notice
+    action_exit = BehaviorDatabaseHelper.type_exit
+
 
     for u in uniques:
         observations = RollingDatabaseHelper.getObservationsOfAddress(rollingDB, u)
@@ -27,7 +29,7 @@ def analyze():
 
         if len(observations) > 1:
 
-            previous_state = __loadState(u)
+            previous_state = __loadState(behaviorDB, u)
 
             for o in range(len(observations) - 1):
                 dist = observations[o + 1].time - observations[o].time
@@ -47,6 +49,11 @@ def analyze():
 
                 # make the current state usable for next iteration
                 previous_state = current_state
+
+            if len(observation_actions)>1:
+                print u
+                print observation_actions
+
         elif len(observations) == 1:
             # there is only one observation, just handle it as a notice
             observation_actions += [(action_notice, observations[0].time)]
@@ -54,15 +61,15 @@ def analyze():
             # no observations: nothing to do, move along to the next iteration
             continue
 
+
+
     behaviorDB.close()
     rollingDB.close()
     return
 
 
-def __loadState(addr):
-    # TODO: load state from possible previous observations in reducedDB
-    return 0b0
-
+def __loadState(connection, addr):
+    return BehaviorDatabaseHelper.getMostRecentStatus(connection, addr)
 
 def test():
     ConfigHelper.ConfigHelper().startUp()
