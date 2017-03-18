@@ -2,11 +2,6 @@ from database.relational import RollingDatabaseHelper
 from database.relational import BehaviorDatabaseHelper
 from config import ConfigHelper
 
-state_not_present = 0b0
-state_noticed = 0b01
-state_present = 0b10
-
-
 def analyze():
     # parses through the rolling database and makes guesses as to when MACs enter and exit
     # after computation, it gives its data to the BehaviorDatabase to insert it into the DB
@@ -40,14 +35,14 @@ def analyze():
                 # find what the state is
 
                 if dist > 30:  # ConfigHelper.getExitTime():
-                    current_state = state_not_present
+                    current_state = action_notice
                 else:
-                    current_state = state_present
+                    current_state = action_exit
 
                 # check if a new state change needs to be added to the list
-                if current_state == state_present and previous_state == state_not_present:
+                if current_state == action_notice and previous_state == action_exit:
                     observation_actions += [(action_notice, observations[o + 1].time)]
-                elif current_state == state_not_present and previous_state == state_present:
+                elif current_state == action_exit and previous_state == action_notice:
                     observation_actions += [(action_exit, observations[o].time)]
 
                 # make the current state usable for next iteration
@@ -66,7 +61,7 @@ def analyze():
 
 def __loadState(addr):
     # TODO: load state from possible previous observations in reducedDB
-    return state_not_present
+    return 0b0
 
 
 def test():
