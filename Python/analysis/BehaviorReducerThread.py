@@ -61,8 +61,11 @@ def analyze():
             # no observations: nothing to do, move along to the next iteration
             continue
 
+        if len(observation_actions)!=0:
+            for oa in observation_actions:
+                BehaviorDatabaseHelper.addBehavior(behaviorDB, u, oa[0], oa[1], 0, 0)
 
-
+    behaviorDB.commit()
     behaviorDB.close()
     rollingDB.close()
     return
