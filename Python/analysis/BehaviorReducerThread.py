@@ -23,44 +23,41 @@ def analyze():
     rollingDB = RollingDatabaseHelper.connect()
 
     uniques = BehaviorDatabaseHelper.getUniques(behaviorDB)
+    action_notice = 0b1
+    action_exit = 0b0
 
-    # declaring vars for state tracking
-
-    current_state = 0  # the current state of the mac, noticed, present, not present
-    previous_state=0
-    begining_observation = 0  # the first notice or the first notice after a declared exit
-    # this is the first of the entry markers
-    observation_segments = []  # this will hold the markers
-
-    observations = []
     for u in uniques:
         observations = RollingDatabaseHelper.getObservationsOfAddress(rollingDB, u)
+        observation_actions = []  # this will hold the entry/exit actions
+
         if len(observations) > 1:
 
-            current_state = __loadState(u)
-            previous_state=current_state #TODO fix this, I think I need the previous observation's time
-            dist = 0
+            previous_state = __loadState(u)
 
-            print u
             for o in range(len(observations) - 1):
                 dist = observations[o + 1].time - observations[o].time
 
-                #find what the state is
+                # find what the state is
 
-                if dist > 30:#ConfigHelper.getExitTime():
-                    current_state=state_not_present
+                if dist > 30:  # ConfigHelper.getExitTime():
+                    current_state = state_not_present
                 else:
-                    current_state=state_present
+                    current_state = state_present
 
+                # check if a new state change needs to be added to the list
+                if current_state == state_present and previous_state == state_not_present:
+                    observation_actions += [(action_notice, observations[o + 1].time)]
+                elif current_state == state_not_present and previous_state == state_present:
+                    observation_actions += [(action_exit, observations[o].time)]
 
-                #handle the state
-                if current_state==state_present and previous_state==state_not_present:
-                    print "entered at "+str(observations[o+1].time)
-                elif current_state==state_not_present and previous_state==state_present:
-                    print "exited at "+str(observations[o].time)
-
-
+                # make the current state usable for next iteration
                 previous_state = current_state
+        elif len(observations) == 1:
+            # there is only one observation, just handle it as a notice
+            observation_actions += [(action_notice, observations[0].time)]
+        else:
+            # no observations: nothing to do, move along to the next iteration
+            continue
 
     behaviorDB.close()
     rollingDB.close()
