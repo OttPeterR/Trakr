@@ -28,7 +28,17 @@ def analyze():
     for address in uniques:
         observationsOfAddress = RollingDatabaseHelper.getObservationsOfAddress(rollingDBConnection, address)
 
-        reduceBehaviorsForAddress(address, observationsOfAddress, behaviorDBConnection, rollingDBConnection)
+        makeEntriesAndExitsForAddress(address, observationsOfAddress, behaviorDBConnection, rollingDBConnection)
+
+        # now that entries and exits have been made for this address
+        # parse through each one and find if they were present during
+        # the interval specified by the config
+
+        # getting all actions for this address (there could be other ones in
+        # the DB that were not in this capture)
+        actions = BehaviorDatabaseHelper.getAllActionsForAddress(behaviorDBConnection, address)
+        for action in actions:
+            continue
 
     # commit changes to behavior db and close out connections
     behaviorDBConnection.commit()
@@ -37,7 +47,7 @@ def analyze():
     return
 
 
-def reduceBehaviorsForAddress(address, observations, behaviorDB, rollingDB):
+def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
     global action_exit, action_notice
 
     observation_actions = []  # this will hold the entry/exit actions
@@ -67,6 +77,9 @@ def reduceBehaviorsForAddress(address, observations, behaviorDB, rollingDB):
             # make the current state usable for next iteration
             previous_state = current_state
 
+        print address
+        print observation_actions
+
     elif len(observations) == 1:
         # there is only one observation, just handle it as a notice
         observation_actions += [(action_notice, observations[0].time)]
@@ -78,6 +91,7 @@ def reduceBehaviorsForAddress(address, observations, behaviorDB, rollingDB):
     for actions in observation_actions:
         # actions is a tuple
         BehaviorDatabaseHelper.addBehavior(behaviorDB, address, actions[0], actions[1], 0, 0)
+
 
 
 def __loadState(connection, addr):
