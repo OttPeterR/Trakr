@@ -8,9 +8,10 @@ table_reduced = "REDUCED"
 table_unique = "UNIQUEMACS"
 table_usercount = "USERCOUNT"
 
-type_enter = 0b1
+
 type_exit = 0b0  # also means for "not present" sometimes
-type_notice = 0b10
+type_notice = 0b1
+type_enter = 0b10
 
 create_reduced_db = "CREATE TABLE IF NOT EXISTS " + table_reduced + " \
                (ADDRESS         TEXT    NOT NULL, \
