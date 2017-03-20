@@ -106,3 +106,6 @@ def getExitTime():
 
 def getHourSegments():
     return configParser.get("analysis", "seg_per_hour")
+
+def getNumBackTrackHours():
+    return configParser.get("analysis", "back_track_hours")
