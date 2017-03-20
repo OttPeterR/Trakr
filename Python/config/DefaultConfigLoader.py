@@ -39,6 +39,7 @@ def createDefaultConfig():
     config.add_section("analysis")
     config.set("analysis", "exit_time", 60*45) # 45 minutes
     config.set("analysis", "entry_time", 60*5) # 6 minutes
+    config.set("analysis", "seg_per_hour", 6) # 6 per hour = 10 minute blocks
 
 
     config.write(file)

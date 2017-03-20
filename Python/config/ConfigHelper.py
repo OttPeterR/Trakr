@@ -104,3 +104,5 @@ def getEntryTime():
 def getExitTime():
     return configParser.get("analysis", "exit_time")
 
+def getHourSegments():
+    return configParser.get("analysis", "seg_per_hour")
