@@ -8,7 +8,6 @@ table_reduced = "REDUCED"
 table_unique = "UNIQUEMACS"
 table_usercount = "USERCOUNT"
 
-
 type_exit = 0b0  # also means for "not present" sometimes
 type_notice = 0b1
 type_enter = 0b10
@@ -31,7 +30,8 @@ insert_unique_command = "INSERT INTO " + table_unique + " (ADDRESS) VALUES ('%s'
 # reduced db commands
 insert_behavior = "INSERT INTO " + table_reduced + "(ADDRESS, TIME, TYPE, LAT, LONG) VALUES ('%s', %s, %s, %s, %s)"
 get_last_observation = "SELECT TYPE FROM (SELECT MAX(TIME), TYPE FROM " + table_reduced + " WHERE ADDRESS=='%s')"
-get_all_action_for_address = "SELECT TYPE, TIME FROM " + table_reduced + "ORDER BY TIME ASC WHERE ADDRESS == '%s'"
+# getting al obs of the specified address, then sorting by their time
+get_all_action_for_address = "SELECT TYPE, TIME FROM (SELECT TYPE, TIME FROM " + table_reduced + " WHERE ADDRESS == '%s') ORDER BY TIME ASC"
 
 
 def init():
