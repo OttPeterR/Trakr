@@ -3,20 +3,19 @@ import ConfigParser
 import os
 
 
-defaultConfigPath = "./trakr.ini"
+defaultConfig = "/trakr.ini"
 
 def createDefaultConfig():
-    file = open(defaultConfigPath, 'w')
+
+    fullPath = __getFullTrakrPath()
+
+    file = open(getConfigPath(), 'w')
     config = ConfigParser.ConfigParser()
-
-    fullPath = str(getFullTrakrPath())
-
 
     config.add_section("trakr")
     config.set("trakr", "full_path", fullPath)
     config.set("trakr", "autostart", False)
     config.set("trakr", "key", "you-need-to-change-this")
-
 
     # database section
     config.add_section("db")
@@ -35,6 +34,7 @@ def createDefaultConfig():
     config.set("scanner", "capture_dir", fullPath+"/runtime/pcap/")
     config.set("scanner", "keep_all_pcap", False)
 
+
     # analysis section
     config.add_section("analysis")
     config.set("analysis", "exit_time", 60*45) # 45 minutes
@@ -48,5 +48,10 @@ def createDefaultConfig():
 
 
 
-def getFullTrakrPath():
+def __getFullTrakrPath():
     return os.path.dirname(os.path.abspath(__file__))[:-7]
+
+def getConfigPath():
+    fullPath = str(__getFullTrakrPath())
+    defaultConfigPath = fullPath + defaultConfig
+    return defaultConfigPath

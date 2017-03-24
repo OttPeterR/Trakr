@@ -20,13 +20,11 @@ class ConfigHelper():
             self.reloadConfig()
 
 
-
-
     def reloadConfig(self):
         global configParser
 
         # check if config is missing
-        if not os.path.exists(DefaultConfigLoader.defaultConfigPath):
+        if not os.path.exists(self.getConfigPath()):
             # create it if needed
             DefaultConfigLoader.createDefaultConfig()
 
@@ -34,12 +32,15 @@ class ConfigHelper():
         self.loadConfig()
 
 
+    def getConfigPath(self):
+        return DefaultConfigLoader.getConfigPath()
+
     #given the path to the config, load it
     def loadConfig(self):
         global configParser
         global loaded
 
-        configParser.read(DefaultConfigLoader.defaultConfigPath)
+        configParser.read(self.getConfigPath())
         loaded = True
         return
 
@@ -99,13 +100,13 @@ def shouldHash():
     # analysis
 
 def getEntryTime():
-    return configParser.get("analysis", "entry_time")
+    return configParser.getint("analysis", "entry_time")
 
 def getExitTime():
-    return configParser.get("analysis", "exit_time")
+    return configParser.getint("analysis", "exit_time")
 
 def getHourSegments():
-    return configParser.get("analysis", "seg_per_hour")
+    return configParser.getint("analysis", "seg_per_hour")
 
 def getNumBackTrackHours():
-    return configParser.get("analysis", "back_track_hours")
+    return configParser.getint("analysis", "back_track_hours")
