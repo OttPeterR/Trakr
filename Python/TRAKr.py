@@ -103,6 +103,8 @@ def __deleteDBs():
     answer = raw_input("Are you sure you would like to delete the databases?: (yes/no)\n")
     if answer.lower() == "yes":
         DatabaseInit.deleteDBs()
+    else:
+        print "Databases not deleted."
 
 
 # deletes all pcap files in the folder, this is a little dangerous
