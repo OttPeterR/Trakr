@@ -6,7 +6,7 @@ def __hash(obj):
     return hashlib.sha256(str(obj)).hexdigest()
 
 def __getHashString(obj):
-    return str(int(str(hash(obj)), 16))
+    return str(hash(obj))
 
 
 def processAddress(address):
