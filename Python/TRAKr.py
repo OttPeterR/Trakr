@@ -66,7 +66,7 @@ def __scan(loadToDabatase):
         Scanner.beginScan(loadToDabatase)
     else:
         # sucks. no scanning today
-        print "Please run as root to capture packets."
+        print("Please run as root to capture packets.")
         os._exit(0)
     return
 
@@ -89,7 +89,7 @@ def __run():
 
 # loads a pcap file into the rolling.db
 def __loadFile(path, latitude, longitude):
-    print "Loading " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")"
+    print("Loading " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")")
     Extractor.ExtractFromFile(path, latitude, longitude, False)
 
 
@@ -104,7 +104,7 @@ def __deleteDBs():
     if answer.lower() == "yes":
         DatabaseInit.deleteDBs()
     else:
-        print "Databases not deleted."
+        print("Databases not deleted.")
 
 
 # deletes all pcap files in the folder, this is a little dangerous
@@ -134,6 +134,6 @@ if __name__ == '__main__':
         TRAKr.run()
         # catch the keyboard interrupt and cleanup half open files
     except KeyboardInterrupt:
-        print "\nTRAKr - Shutting down...\n"
+        print("\nTRAKr - Shutting down...\n")
         __removePcaps()
         os._exit(0)
