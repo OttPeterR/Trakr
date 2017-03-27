@@ -109,7 +109,7 @@ def getUniques(connection, startTime):
     return macs
 
 
-def addBehavior(connection, address, type, time, lat, long):
+def addBehavior(connection, address, type, time, lat=0, long=0):
     # remember to commit the connection after doing this
     # it doesnt automatically commit on its own because this can get called rapidly
     connection.execute(insert_behavior % (address, time, type, lat, long))

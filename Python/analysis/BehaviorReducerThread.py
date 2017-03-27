@@ -62,7 +62,7 @@ def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
 
             # find what the state is
 
-            if dist > 30:  # ConfigHelper.getExitTime():
+            if dist > ConfigHelper.getExitTime():
                 current_state = action_notice
             else:
                 current_state = action_exit
@@ -88,7 +88,7 @@ def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
     # putting the observations into the behavior database
     for actions in observation_actions:
         # actions is a tuple
-        BehaviorDatabaseHelper.addBehavior(behaviorDB, address, actions[0], actions[1], 0, 0)
+        BehaviorDatabaseHelper.addBehavior(behaviorDB, address, actions[0], actions[1])  # can add lat/long here if you want
 
 
 def makeTimeSlots():
