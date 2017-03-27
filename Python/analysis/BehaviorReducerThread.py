@@ -1,3 +1,4 @@
+import time
 from database.relational import RollingDatabaseHelper
 from database.relational import BehaviorDatabaseHelper
 from config import ConfigHelper
@@ -8,12 +9,19 @@ def analyze():
     action_notice = BehaviorDatabaseHelper.type_notice
     action_exit = BehaviorDatabaseHelper.type_exit
 
-
     behaviorDBConnection = BehaviorDatabaseHelper.connect()
     rollingDBConnection = RollingDatabaseHelper.connect()
 
-    uniques = BehaviorDatabaseHelper.getUniques(behaviorDBConnection)
+    # current GMT minus the backtracking time (in seconds)
+    startTime = int(time.time()) - int(ConfigHelper.getNumBackTrackHours() * 3600)
+    # or if we want to analyze everything we've ever captured
+    if ConfigHelper.doAllAnalysisForever():
+        startTime = 0
+
+    uniques = BehaviorDatabaseHelper.getUniques(behaviorDBConnection, startTime)
     timeSlots = makeTimeSlots()
+
+    print len(uniques)
 
     for address in uniques:
         observationsOfAddress = RollingDatabaseHelper.getObservationsOfAddress(rollingDBConnection, address)
@@ -77,19 +85,18 @@ def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
         # no observations --> nothing to do, move along
         return
 
-    print address
-    print observation_actions
-
     # putting the observations into the behavior database
     for actions in observation_actions:
         # actions is a tuple
         BehaviorDatabaseHelper.addBehavior(behaviorDB, address, actions[0], actions[1], 0, 0)
 
+
 def makeTimeSlots():
     # returns an array of the size of time slots that should be created
     slotsPerHour = ConfigHelper.getHourSegments()
     backTrackHours = ConfigHelper.getNumBackTrackHours()
-    return [0]*slotsPerHour*backTrackHours
+    return [0] * slotsPerHour * backTrackHours
+
 
 def __loadState(connection, addr):
     return BehaviorDatabaseHelper.getMostRecentStatus(connection, addr)
