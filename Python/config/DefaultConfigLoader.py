@@ -41,6 +41,7 @@ def createDefaultConfig():
     config.set("analysis", "entry_time", 60*5) # 6 minutes
     config.set("analysis", "seg_per_hour", 6) # 6 per hour = 10 minute blocks
     config.set("analysis", "back_track_hours", 3) # will look backwards 3 hours into the db for behavior analysis
+    config.set("analysis", "do_all_analysis_forever", False) # if this is true, it will analyze all of database
 
 
     config.write(file)

@@ -110,3 +110,6 @@ def getHourSegments():
 
 def getNumBackTrackHours():
     return configParser.getint("analysis", "back_track_hours")
+
+def doAllAnalysisForever():
+    return configParser.getboolean("analysis", "do_all_analysis_forever")
