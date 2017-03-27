@@ -19,13 +19,15 @@ create_reduced_db = "CREATE TABLE IF NOT EXISTS " + table_reduced + " \
                LAT             DOUBLE  NOT NULL, \
                LONG            DOUBLE  NOT NULL);"
 create_unique_db = "CREATE TABLE IF NOT EXISTS " + table_unique + "\
-               (ADDRESS   TEXT   PRIMARY KEY   NOT NULL);"
+               (ADDRESS   TEXT   PRIMARY KEY   NOT NULL," \
+                "TIME       INT                 NOT NULL);"
 create_usercount_db = "CREATE TABLE IF NOT EXISTS " + table_usercount + "" \
                                                                         "(TIME    LONG  NOT NULL," \
                                                                         "NUM_USERS    INT     NOT NULL)"
 # unique MACs
-get_all_macs = "SELECT ADDRESS FROM " + table_unique
-insert_unique_command = "INSERT INTO " + table_unique + " (ADDRESS) VALUES ('%s')"
+get_all_macs_after = "SELECT ADDRESS FROM " + table_unique+" WHERE TIME >= %s"
+insert_unique_command = "INSERT INTO " + table_unique + " (ADDRESS, TIME) VALUES ('%s', %s)"
+update_unique_command = "UPDATE "+table_unique+" SET TIME=%s WHERE ADDRESS=='%s' "
 
 # reduced db commands
 insert_behavior = "INSERT INTO " + table_reduced + "(ADDRESS, TIME, TYPE, LAT, LONG) VALUES ('%s', %s, %s, %s, %s)"
@@ -82,21 +84,25 @@ def __addPresetAddresses(connection):
 
 # True - if the address was successfully stored or it was ignored
 # False - if there was a problem storing the address
-def addNewAddress(connection, address):
+def addNewAddress(connection, address, time=0):
     try:
         address = PrivacyUtility.processAddress(address)
-        connection.execute(insert_unique_command % address)
+        connection.execute(insert_unique_command % (address, time))
         connection.commit()
-    except Exception, errmsg:
-        # print "New MAC address not inserted, was not unique"
-        # print errmsg
-        # I'll just let it handle uniqueness checking, maybe fix this if it gets slow
-        return False
-    return True
+        return True
+    except Exception:
+        #maybe it was already in there, so lets try updating it instead
+        try:
+            connection.execute(update_unique_command % (time, address))
+            return True
+        except Exception:
+            pass
+    return False
 
 
-def getUniques(connection):
-    cursor = connection.execute(get_all_macs)
+
+def getUniques(connection, startTime):
+    cursor = connection.execute(get_all_macs_after % startTime)
     macs = []
     for c in cursor:
         macs.append(c[0])

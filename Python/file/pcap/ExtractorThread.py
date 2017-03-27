@@ -68,12 +68,11 @@ def getUniqueMACs(connection, observations):
     newUnique = 0
     dict = {} #dictionary of unique MAC addresses
     address = ""
-
     for o in observations:
         # is this a new mac address?
         if o.mac not in dict:
             dict[o.mac] = ind
-            if BehaviorDatabaseHelper.addNewAddress(connection, o.mac):
+            if BehaviorDatabaseHelper.addNewAddress(connection, o.mac, o.time):
                 newUnique = newUnique+1
             ind = ind + 1
 
