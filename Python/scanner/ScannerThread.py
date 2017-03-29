@@ -13,7 +13,6 @@ def scanLoop(loadToDabatase, lat=0, long=0):
 
 
 def scan():
-
     ThreadKeeper.incrementThreadCount()
 
     captureInterface = str(ConfigHelper.getWirelessCaptureInterface())
@@ -35,13 +34,13 @@ def scan():
         output = open("/dev/null", "wr")
 
         # tshark -I -i CAPTURE_INTERFACE -a duration:CAPTURE_DURATION -w OUTPUT_FILE.pcap
-        call(["tshark",
-                         "-I",  #monitor mode
-                         "-i", captureInterface, # capture interface
-                         "-a", ("duration:"+captureDuration), # run time
-                         "-w", capturePath] #where to save the file
-                         #, stdout=output #redirecting the output to null
-             )
+        command = ["tshark",
+                   "-I",  # monitor mode
+                   "-i", captureInterface,  # capture interface
+                   "-a", ("duration:" + captureDuration),  # run time
+                   "-w", capturePath]  # where to save the file
+        call(command, stdout=None)  # redirecting the output to null
+
     except Exception, errmsg:
         print "Scan thread failed while running:"
         print errmsg
