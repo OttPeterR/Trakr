@@ -49,9 +49,12 @@ def __extractToFile(filePath, outputFilePath):
 
 
 def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePath):
-    packets = []
+    # open the tempFile of values
     tempFile = open(outputFilePath, 'r')
-    # now process the file
+
+    # fill the array with line reads
+    packets = []
+    count = 0
     for line in tempFile:
         # if the line has info that's useful
         if len(line) > 0:
@@ -59,8 +62,12 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
                 # make a tuple out of it (time, address)
                 addr, time = line.split(separator)
                 packets += [(time, addr)]
+                count = count + 1
 
+    # cut down packets, becasue all won't always be used
+    # packets = packets[count]
     # cleaning up temp file
+    tempFile.close()
     call(["rm", outputFilePath])
 
     # deleting the old pcap that was just read in
@@ -68,10 +75,13 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
 
     # making these into ints just to be sure
     latitude, longitude = __fixLatLong(latitude, longitude)
-    observations = []
+    
+    observations = [Observation] * count
+    count = 0
     for packet in packets:
         # packet is a tuple of (time, address)
-        observations += [Observation.makeObservation(packet[0], packet[1], latitude, longitude)]
+        observations[count] = Observation.makeObservation(packet[0], packet[1], latitude, longitude)
+        count = count + 1
     return observations
 
 
