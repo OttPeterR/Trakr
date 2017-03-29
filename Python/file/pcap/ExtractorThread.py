@@ -8,8 +8,8 @@ from database.relational import BehaviorDatabaseHelper
 from database.relational import RollingDatabaseHelper
 from management import ThreadKeeper
 
-def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
+def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     ThreadKeeper.incrementThreadCount()
 
     packets = rdpcap(filePath)
@@ -18,10 +18,10 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
     latitude, longitude = __fixLatLong(latitude, longitude)
 
-    #rough estimate as how big the list might be
-    #fill it, then see if more room needs to be made
+    # rough estimate as how big the list might be
+    # fill it, then see if more room needs to be made
     array_size = getCaptureDuration() * 400
-    observations = [Observation]*array_size
+    observations = [Observation] * array_size
     count = 0
     for packet in packets:
         if count < array_size:
@@ -30,7 +30,7 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
             observations += [Observation.makeObservation(packet, latitude, longitude)]
         count = count + 1
 
-    #making sure to cut off any unused parts
+    # making sure to cut off any unused parts
     if count < array_size:
         observations = observations[:count]
 
@@ -46,6 +46,7 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
     ThreadKeeper.decrementThreadCount()
     return
+
 
 def __fixLatLong(latitude, longitude):
     try:
@@ -66,31 +67,33 @@ def __loadObservations(connection, observations):
     connection.commit()
     return
 
+
 def getUniqueMACs(connection, observations):
     ind = 0
     newUnique = 0
-    dict = {} #dictionary of unique MAC addresses
+    dict = {}  # dictionary of unique MAC addresses
     address = ""
     for o in observations:
         # is this a new mac address?
         if o.mac not in dict:
             dict[o.mac] = ind
             if BehaviorDatabaseHelper.addNewAddress(connection, o.mac, o.time):
-                newUnique = newUnique+1
+                newUnique = newUnique + 1
             ind = ind + 1
 
     print "new unique devices: " + str(newUnique)
     return
 
 
-
 def __renamePcap(filePath):
     if filePath.endswith("-unprocessed.pcap"):
-        newFilePath = filePath[:-17]+".pcap"
+        newFilePath = filePath[:-17] + ".pcap"
         call(["mv", filePath, newFilePath])
+
 
 def __deletePcap(filePath):
     call(["rm", filePath])
+
 
 def __handleOldPcapFile(filePath, allowDeletion):
     if getKeepAllPcaps():
