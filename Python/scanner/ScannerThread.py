@@ -31,15 +31,14 @@ def scan():
         print errmsg
 
     try:
-        output = open("/dev/null", "wr")
-
         # tshark -I -i CAPTURE_INTERFACE -a duration:CAPTURE_DURATION -w OUTPUT_FILE.pcap
         command = ["tshark",
                    "-I",  # monitor mode
                    "-i", captureInterface,  # capture interface
                    "-a", ("duration:" + captureDuration),  # run time
                    "-w", capturePath]  # where to save the file
-        call(command, stdout=None)  # redirecting the output to null
+        with open("/dev/null", 'w') as outNull:
+            call(command, stdout=outNull)  # redirecting the output to null
 
     except Exception, errmsg:
         print "Scan thread failed while running:"
