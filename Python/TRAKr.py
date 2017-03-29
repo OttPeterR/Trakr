@@ -37,7 +37,7 @@ def TRAKr(app):
     else:
         # this only scans and puts the MACs into the rolling.db
         if TRAKr.params.scan:
-            __scan(True)
+            __scan(False)
 
         # load up a file, lat/long will be 0 as default if not inputted
         if TRAKr.params.load != "":
@@ -135,5 +135,6 @@ if __name__ == '__main__':
         # catch the keyboard interrupt and cleanup half open files
     except KeyboardInterrupt:
         print("\nTRAKr - Shutting down...\n")
-        __removePcaps()
+        if not ConfigHelper.getKeepAllPcaps():
+            __removePcaps()
         os._exit(0)
