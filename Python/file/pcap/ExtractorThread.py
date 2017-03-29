@@ -1,9 +1,7 @@
 from subprocess import call
 
-from scapy.all import *
-
 import Observation
-from config.ConfigHelper import getKeepAllPcaps, getCaptureDuration
+from config.ConfigHelper import getKeepAllPcaps, getCaptureDuration, getCaptureDirectory
 from database.relational import BehaviorDatabaseHelper
 from database.relational import RollingDatabaseHelper
 from management import ThreadKeeper
@@ -12,7 +10,31 @@ from management import ThreadKeeper
 def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     ThreadKeeper.incrementThreadCount()
 
-    packets = rdpcap(filePath)
+    command = ["tshark", "-nr", filePath, "-N", "m",  # select the file for reading
+               "-T", "fields",  # specify some fields to print out:
+               "-e", "wlan.sa_resolved",  # print out the MAC
+               "-e", "frame.time_epoch",  # print out the epoch time
+               "-E", "separator=,"]  # separate the values with a comma
+    try:
+        # running process with output redirected to file
+        #TODO make this file exist only in memory
+        outputFilePath = __makeNewOutputFile()
+        with open(outputFilePath, 'w') as out:
+            call(command, stdout=out)
+
+        # cleaning up temp file
+        call(["rm", outputFilePath])
+
+    except Exception, errmsg:
+        print "Extraction failed."
+        try:
+            print "\tPerhaps tshark cannot be found\n\ttshark location:"
+            call(["which", "tshark"])
+        except Exception, innererr:
+            pass
+        print errmsg
+
+    return False
 
     __handleOldPcapFile(filePath, allowDeletion)
 
@@ -23,6 +45,7 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     array_size = getCaptureDuration() * 400
     observations = [Observation] * array_size
     count = 0
+    packets = []
     for packet in packets:
         if count < array_size:
             observations[count] = Observation.makeObservation(packet, latitude, longitude)
@@ -30,7 +53,7 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
             observations += [Observation.makeObservation(packet, latitude, longitude)]
         count = count + 1
 
-    #done with packets, remove from memory
+    # done with packets, remove from memory
     del packets
 
     # making sure to cut off any unused parts
@@ -44,7 +67,7 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     RollingDatabaseHelper.removeBadPackets(conn_rolling)
     getUniqueMACs(conn_behavior, observations)
 
-    #done with observations, remove it from memory
+    # done with observations, remove it from memory
     del observations
 
     conn_rolling.close()
@@ -107,3 +130,8 @@ def __handleOldPcapFile(filePath, allowDeletion):
     else:
         if allowDeletion:
             __deletePcap(filePath)
+
+
+def __makeNewOutputFile():
+    path = getCaptureDirectory() + "temp_" + ThreadKeeper.getTimeStamp() + ".txt"
+    return path
