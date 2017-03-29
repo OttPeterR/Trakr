@@ -21,24 +21,7 @@ class Observation:
         self.lat = lat
         self.long = long
 
-def makeObservation(packet, lat, long):
-    return Observation(__getTime(packet),
-                       __getTransmissionAddress(packet),
+def makeObservation(address, time, lat, long):
+    return Observation(time,
+                       address,
                        lat, long)
-
-def __getTransmissionAddress(packet):
-    address = ""
-    if packet.name == ethernet:
-        address = packet.src
-    elif packet.name == radiotap_dummy:
-        try:
-            address = packet.addr2
-        except AttributeError:
-            return error
-    else:
-        return unknown
-    return address
-
-#UNIX time in seconds
-def __getTime(packet):
-    return long(packet.time)
