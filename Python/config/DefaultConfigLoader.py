@@ -30,7 +30,7 @@ def createDefaultConfig():
     # find a way to check the OS and then get the default interface
     # because this works for MacOS only
     config.set("scanner", "interface", "en0")
-    config.set("scanner","duration", 60*10) #scan for 10 minutes
+    config.set("scanner","duration", 60*5) #scan for 5 minutes
     config.set("scanner", "capture_dir", fullPath+"/runtime/pcap/")
     config.set("scanner", "keep_all_pcap", False)
 
@@ -38,7 +38,7 @@ def createDefaultConfig():
     # analysis section
     config.add_section("analysis")
     config.set("analysis", "exit_time", 60*45) # 45 minutes
-    config.set("analysis", "entry_time", 60*5) # 6 minutes
+    config.set("analysis", "entry_time", 60*5) # 5 minutes
     config.set("analysis", "seg_per_hour", 6) # 6 per hour = 10 minute blocks
     config.set("analysis", "back_track_hours", 3) # will look backwards 3 hours into the db for behavior analysis
     config.set("analysis", "do_all_analysis_forever", False) # if this is true, it will analyze all of database
