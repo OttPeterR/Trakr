@@ -1,4 +1,5 @@
-from subprocess import call
+from subprocess import call, Popen
+from os import devnull, waitpid
 
 from config import ConfigHelper
 from file.pcap import Extractor
@@ -6,6 +7,7 @@ from management import ThreadKeeper
 
 
 def scanLoop(loadToDabatase, lat=0, long=0):
+    print "Scanning..."
     while True:
         pcapPath = scan()
         if loadToDabatase:
@@ -37,8 +39,10 @@ def scan():
                    "-i", captureInterface,  # capture interface
                    "-a", ("duration:" + captureDuration),  # run time
                    "-w", capturePath]  # where to save the file
-        with open("/dev/null", 'w') as outNull:
-            call(command, stdout=outNull)  # redirecting the output to null
+        #with open(devnull, 'wb') as outNull:
+        #    call(command, stdout=outNull)  # redirecting the output to null, doesn't work though
+        p = Popen(" ".join(command)+" > /dev/null 2>&1", shell=True)
+        waitpid(p.pid, 0)
 
     except Exception, errmsg:
         print "Scan thread failed while running:"
