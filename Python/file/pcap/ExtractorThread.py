@@ -30,19 +30,25 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
             observations += [Observation.makeObservation(packet, latitude, longitude)]
         count = count + 1
 
+    #done with packets, remove from memory
+    del packets
+
     # making sure to cut off any unused parts
     if count < array_size:
         observations = observations[:count]
 
-    roll_conn = RollingDatabaseHelper.connect()
-    beha_conn = BehaviorDatabaseHelper.connect()
+    conn_rolling = RollingDatabaseHelper.connect()
+    conn_behavior = BehaviorDatabaseHelper.connect()
 
-    __loadObservations(roll_conn, observations)
-    RollingDatabaseHelper.removeBadPackets(roll_conn)
-    getUniqueMACs(beha_conn, observations)
+    __loadObservations(conn_rolling, observations)
+    RollingDatabaseHelper.removeBadPackets(conn_rolling)
+    getUniqueMACs(conn_behavior, observations)
 
-    roll_conn.close()
-    beha_conn.close()
+    #done with observations, remove it from memory
+    del observations
+
+    conn_rolling.close()
+    conn_behavior.close()
 
     ThreadKeeper.decrementThreadCount()
     return
