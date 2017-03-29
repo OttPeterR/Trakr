@@ -10,6 +10,12 @@ from management import ThreadKeeper
 def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     ThreadKeeper.incrementThreadCount()
 
+    # rough estimate as how big the list might be
+    # fill it, then see if more room needs to be made
+    array_size = getCaptureDuration() * 400
+    observations = [Observation] * array_size
+    packets = []
+
     command = ["tshark", "-nr", filePath, "-N", "m",  # select the file for reading
                "-T", "fields",  # specify some fields to print out:
                "-e", "wlan.sa_resolved",  # print out the MAC
@@ -17,11 +23,11 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
                "-E", "separator=,"]  # separate the values with a comma
     try:
         # running process with output redirected to file
-        #TODO make this file exist only in memory
+        # TODO make this file exist only in memory
         outputFilePath = __makeNewOutputFile()
         with open(outputFilePath, 'w') as out:
             call(command, stdout=out)
-
+            # TODO fill 'packets' array with stuff when you read the file, tuple of (address, time)
         # cleaning up temp file
         call(["rm", outputFilePath])
 
@@ -33,24 +39,21 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
         except Exception, innererr:
             pass
         print errmsg
+        return False
 
-    return False
-
+    # deleting the old pcap that was just read in
     __handleOldPcapFile(filePath, allowDeletion)
 
+    # making these into ints just to be sure
     latitude, longitude = __fixLatLong(latitude, longitude)
 
-    # rough estimate as how big the list might be
-    # fill it, then see if more room needs to be made
-    array_size = getCaptureDuration() * 400
-    observations = [Observation] * array_size
     count = 0
-    packets = []
     for packet in packets:
+        # packet is a tuple of (address, time)
         if count < array_size:
-            observations[count] = Observation.makeObservation(packet, latitude, longitude)
+            observations[count] = Observation.makeObservation(packet[1], packet[0], latitude, longitude)
         else:
-            observations += [Observation.makeObservation(packet, latitude, longitude)]
+            observations += [Observation.makeObservation(packet[1], packet[0], latitude, longitude)]
         count = count + 1
 
     # done with packets, remove from memory
