@@ -3,7 +3,8 @@ from subprocess import call
 from management import ThreadKeeper
 from config.ConfigHelper import getCaptureDirectory, getCaptureDuration, getKeepAllPcaps
 
-separator=','
+separator = ','
+
 
 def extractToObservations(filePath, latitude, longitude, allowDeletion):
     # make a file path that will be used
@@ -52,16 +53,12 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
     tempFile = open(outputFilePath, 'r')
     # now process the file
     for line in tempFile:
-        # TODO fill 'packets' array with stuff when you read the file, tuple of (time, address)
-        # regex the line, it will be one of the two (with no spaces)
-        # address,time
-        # ,time
-        # if its just a time, skip it
-        if len(line)>0:
-            if(line[0]!=','):
+        # if the line has info that's useful
+        if len(line) > 0:
+            if (line[0] != ','):
+                # make a tuple out of it (time, address)
                 addr, time = line.split(separator)
                 packets += [(time, addr)]
-        pass
 
     # cleaning up temp file
     call(["rm", outputFilePath])
