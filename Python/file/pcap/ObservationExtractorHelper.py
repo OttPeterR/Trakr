@@ -3,6 +3,7 @@ from subprocess import call
 from management import ThreadKeeper
 from config.ConfigHelper import getCaptureDirectory, getCaptureDuration, getKeepAllPcaps
 
+separator=','
 
 def extractToObservations(filePath, latitude, longitude, allowDeletion):
     # make a file path that will be used
@@ -56,6 +57,10 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
         # address,time
         # ,time
         # if its just a time, skip it
+        if len(line)>0:
+            if(line[0]!=','):
+                addr, time = line.split(separator)
+                packets += [(time, addr)]
         pass
 
     # cleaning up temp file
