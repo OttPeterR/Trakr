@@ -73,7 +73,7 @@ def getWirelessCaptureInterface():
     return configParser.get("scanner", "interface")
 
 def getCaptureDuration():
-    return configParser.get("scanner", "duration")
+    return configParser.getint("scanner", "duration")
 
 def getCaptureDirectory():
     return configParser.get("scanner", "capture_dir")

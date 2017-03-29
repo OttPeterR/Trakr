@@ -3,7 +3,7 @@ from subprocess import call
 from scapy.all import *
 
 import Observation
-from config.ConfigHelper import getKeepAllPcaps
+from config.ConfigHelper import getKeepAllPcaps, getCaptureDuration
 from database.relational import BehaviorDatabaseHelper
 from database.relational import RollingDatabaseHelper
 from management import ThreadKeeper
@@ -18,18 +18,21 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
 
     latitude, longitude = __fixLatLong(latitude, longitude)
 
-    #make a big list to fill
+    #rough estimate as how big the list might be
     #fill it, then see if more room needs to be made
-    array_size = 10000
+    array_size = getCaptureDuration() * 400
     observations = [Observation]*array_size
-    iter = 0
+    count = 0
     for packet in packets:
-        if iter < array_size:
-            observations[iter] = Observation.makeObservation(packet, latitude, longitude)
-            iter = iter + 1
+        if count < array_size:
+            observations[count] = Observation.makeObservation(packet, latitude, longitude)
         else:
             observations += [Observation.makeObservation(packet, latitude, longitude)]
+        count = count + 1
 
+    #making sure to cut off any unused parts
+    if count < array_size:
+        observations = observations[:count]
 
     roll_conn = RollingDatabaseHelper.connect()
     beha_conn = BehaviorDatabaseHelper.connect()
