@@ -35,6 +35,6 @@ def __getUniqueMACs(connection, observations):
             if BehaviorDatabaseHelper.addNewAddress(connection, o.mac, o.time):
                 newUnique = newUnique + 1
             ind = ind + 1
-
-    print "  new devices: " + str(newUnique)
+            print "{0}\r".format("  new devices: " + str(newUnique)),
+    print
     return
