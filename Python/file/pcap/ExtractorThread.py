@@ -12,5 +12,7 @@ def extract(filePath, latitude=0, longitude=0, allowDeletion=True):
     # process them
     processObservations(observations)
 
+    del observations
+
     ThreadKeeper.decrementThreadCount()
     return

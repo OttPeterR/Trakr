@@ -8,9 +8,6 @@ def processObservations(observations):
     RollingDatabaseHelper.removeBadPackets(conn_rolling)
     __getUniqueMACs(conn_behavior, observations)
 
-    # done with observations, remove it from memory
-    del observations
-
     conn_rolling.close()
     conn_behavior.close()
 
