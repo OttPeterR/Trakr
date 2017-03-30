@@ -3,7 +3,7 @@ from subprocess import call
 from management import ThreadKeeper
 from config.ConfigHelper import getCaptureDirectory, getCaptureDuration, getKeepAllPcaps
 
-separator = ','
+separator = '$'
 
 
 def extractToObservations(filePath, latitude, longitude, allowDeletion):
@@ -34,7 +34,7 @@ def __extractToFile(filePath, outputFilePath):
                        "-T", "fields",  # specify some fields to print out:
                        "-e", "wlan.ta_resolved",  # print out the MAC
                        "-e", "frame.time_epoch",  # print out the epoch time
-                       "-E", "separator=,"]  # separate the values with a comma
+                       "-E", "separator="+separator]  # separate the values
 
             call(command, stdout=outFile)
 
