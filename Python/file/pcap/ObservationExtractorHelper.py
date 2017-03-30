@@ -8,9 +8,12 @@ separator = ','
 
 def extractToObservations(filePath, latitude, longitude, allowDeletion):
     # make a file path that will be used
+    print "Reading: "+filePath+"\r"
     outputFilePath = __makeNewOutputFile()
+
+    extracted = __extractToFile(filePath, outputFilePath)
     # if successfully extracted data
-    if __extractToFile(filePath, outputFilePath):
+    if extracted:
         # then turn it into observations and return it
         return __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePath)
     # otherwise just return an empty list
@@ -19,6 +22,7 @@ def extractToObservations(filePath, latitude, longitude, allowDeletion):
 
 
 def __extractToFile(filePath, outputFilePath):
+
     try:
         # running process with output redirected to file
         # TODO make this file exist only in memory
@@ -33,19 +37,17 @@ def __extractToFile(filePath, outputFilePath):
                        "-E", "separator=,"]  # separate the values with a comma
 
             call(command, stdout=outFile)
-            outFile.close()
 
         except Exception, errmsg:
             print "Error while calling tshark for extraction:"
             print errmsg
-
             ##### end tshark command section
 
     except Exception, errmsg:
         print "Error with creating temp file:"
         print errmsg
         return False
-    return True
+    return outFile
 
 
 def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePath):
@@ -63,9 +65,9 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
                 addr, time = line.split(separator)
                 packets += [(time, addr)]
                 count = count + 1
+                print '{0}\r'.format("  values: " + str(count)),
+    print
 
-    # cut down packets, becasue all won't always be used
-    # packets = packets[count]
     # cleaning up temp file
     tempFile.close()
     call(["rm", outputFilePath])
@@ -75,13 +77,16 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
 
     # making these into ints just to be sure
     latitude, longitude = __fixLatLong(latitude, longitude)
-    
+
     observations = [Observation] * count
+    total = count
     count = 0
     for packet in packets:
         # packet is a tuple of (time, address)
         observations[count] = Observation.makeObservation(packet[0], packet[1], latitude, longitude)
         count = count + 1
+        print '{0}\r'.format("  processing: "+str(100 * count / total) + "%"),
+    print
     return observations
 
 

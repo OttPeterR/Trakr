@@ -36,5 +36,5 @@ def __getUniqueMACs(connection, observations):
                 newUnique = newUnique + 1
             ind = ind + 1
 
-    print "new unique devices: " + str(newUnique)
+    print "  new devices: " + str(newUnique)
     return
