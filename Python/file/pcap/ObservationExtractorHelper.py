@@ -23,6 +23,8 @@ def extractToObservations(filePath, latitude, longitude, allowDeletion):
 
 def __extractToFile(filePath, outputFilePath):
 
+    outFile = None
+
     try:
         # running process with output redirected to file
         # TODO make this file exist only in memory
@@ -32,7 +34,7 @@ def __extractToFile(filePath, outputFilePath):
         try:
             command = ["tshark", "-nr", filePath, "-N", "m",  # select the file for reading
                        "-T", "fields",  # specify some fields to print out:
-                       "-e", "wlan.ta_resolved",  # print out the MAC
+                       "-e", "wlan.ta_resolved",  # print out the MAC (transmission address)
                        "-e", "frame.time_epoch",  # print out the epoch time
                        "-E", "separator="+separator]  # separate the values
 
