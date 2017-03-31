@@ -134,7 +134,7 @@ if __name__ == '__main__':
         TRAKr.run()
         # catch the keyboard interrupt and cleanup half open files
     except KeyboardInterrupt:
-        print("\nTRAKr - Shutting down...\n")
+        print("\nTRAKr - Keyboard Interrupt - Shutting down...\n")
         if not ConfigHelper.getKeepAllPcaps():
             __removePcaps()
         os._exit(0)
