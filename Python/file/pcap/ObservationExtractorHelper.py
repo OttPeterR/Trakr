@@ -8,7 +8,7 @@ separator = '$'
 
 def extractToObservations(filePath, latitude, longitude, allowDeletion):
     # make a file path that will be used
-    print "Reading: "+filePath+"\r"
+    print "Reading: " + filePath + "\r"
     outputFilePath = __makeNewOutputFile()
 
     extracted = __extractToFile(filePath, outputFilePath)
@@ -22,7 +22,6 @@ def extractToObservations(filePath, latitude, longitude, allowDeletion):
 
 
 def __extractToFile(filePath, outputFilePath):
-
     outFile = None
 
     try:
@@ -36,7 +35,7 @@ def __extractToFile(filePath, outputFilePath):
                        "-T", "fields",  # specify some fields to print out:
                        "-e", "wlan.ta_resolved",  # print out the MAC (transmission address)
                        "-e", "frame.time_epoch",  # print out the epoch time
-                       "-E", "separator="+separator]  # separate the values
+                       "-E", "separator=" + separator]  # separate the values
 
             call(command, stdout=outFile)
 
@@ -87,7 +86,7 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
         # packet is a tuple of (time, address)
         observations[count] = Observation.makeObservation(packet[0], packet[1], latitude, longitude)
         count = count + 1
-        print '{0}\r'.format("  processing: "+str(100 * count / total) + "%"),
+        print '{0}\r'.format("  processing: " + str(100 * count / total) + "%"),
     print
     return observations
 
