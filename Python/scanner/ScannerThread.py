@@ -4,14 +4,16 @@ from os import devnull, waitpid
 from config import ConfigHelper
 from file.pcap import Extractor
 from management import ThreadKeeper
+from analysis import BehaviorReducer
 
-
-def scanLoop(loadToDabatase, lat=0, long=0):
+def scanLoop(loadToDabatase, lat=0, long=0, analyze=False):
     print "Scanning..."
     while True:
         pcapPath = scan()
         if loadToDabatase:
             Extractor.ExtractFromFile(pcapPath, lat, long)
+        if analyze:
+            BehaviorReducer.beginAnalysis()
 
 
 def scan():
