@@ -8,7 +8,7 @@ from file.pcap import Extractor
 from database import DatabaseInit
 from management import ThreadKeeper
 from scanner import Scanner
-
+from analysis import BehaviorReducer
 
 # this is what runs when the command line application is invoked
 @cli.app.CommandLineApp
@@ -37,15 +37,16 @@ def TRAKr(app):
     else:
         # this only scans and puts the MACs into the rolling.db
         if TRAKr.params.scan:
-            __scan(False)
+            __scan(False, False)
+        # run analysis on rolling.db
+        elif TRAKr.params.analyze:
+            __analyze()
 
         # load up a file, lat/long will be 0 as default if not inputted
         if TRAKr.params.load != "":
             __loadFile(TRAKr.params.load, TRAKr.params.lat, TRAKr.params.long)
 
-        # run analysis on rolling.db
-        if TRAKr.params.analyze:
-            __analyze()
+
 
     # wait just a little bit, because sometimes it'll race condition and go past this
     ThreadKeeper.wait(0.01)
@@ -58,12 +59,12 @@ def TRAKr(app):
 # Helper functions to do the things
 
 
-def __scan(loadToDabatase):
+def __scan(loadToDabatase, analyze):
     # root check
     if os.geteuid() == 0:
         # we're good to go, let's scan, this will loop infinitely
         __initDBs()
-        Scanner.beginScan(loadToDabatase)
+        Scanner.beginScan(loadToDabatase, analyze)
     else:
         # sucks. no scanning today
         print("Please run as root to capture packets.")
@@ -76,14 +77,14 @@ def __analyze():
     # call analysis to process the folder of databases
     # also look for a subfolder called importme - that will contain other
     #   rolling.db that need to be consolidated into one big one
+    BehaviorReducer.beginAnalysis()
     return
 
 
 # all-in-one solution for doing everything
 def __run():
     __initDBs()
-    __scan(True)  # while running a single instance, scan will call it's own analysis
-    __analyze()
+    __scan(True, True)  # while running a single instance, scan will call it's own analysis
     return
 
 
