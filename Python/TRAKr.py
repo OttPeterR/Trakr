@@ -10,6 +10,7 @@ from management import ThreadKeeper
 from scanner import Scanner
 from analysis import BehaviorReducer
 
+
 # this is what runs when the command line application is invoked
 @cli.app.CommandLineApp
 def TRAKr(app):
@@ -45,8 +46,8 @@ def TRAKr(app):
         # load up a file, lat/long will be 0 as default if not inputted
         if TRAKr.params.load != "":
             __loadFile(TRAKr.params.load, TRAKr.params.lat, TRAKr.params.long)
-
-
+        elif TRAKr.params.loaddir!="":
+            __loadDir(TRAKr.params.loaddir, TRAKr.params.lat, TRAKr.params.long)
 
     # wait just a little bit, because sometimes it'll race condition and go past this
     ThreadKeeper.wait(0.01)
@@ -90,8 +91,14 @@ def __run():
 
 # loads a pcap file into the rolling.db
 def __loadFile(path, latitude, longitude):
-    print("Loading " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")")
-    Extractor.ExtractFromFile(path, latitude, longitude, False)
+    print("Loading: " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")")
+    Extractor.extractFromFile(path, latitude, longitude, False)
+
+
+# loads a directory full of pcap files
+def __loadDir(path, latitude, longitude):
+    print("Loading Dir: " + str(path) + " at: (" + str(latitude) + ", " + str(longitude) + ")")
+    Extractor.extractFromDir(path, latitude, longitude, False)
 
 
 # it's okay to call this multiple times, it just makes sure that everything is there
@@ -127,6 +134,7 @@ TRAKr.add_param("-deleteDB", help="delete all databases and create new ones.", a
 TRAKr.add_param("-analyze", help="run analysis on packets", action='store_true')
 
 TRAKr.add_param("-load", help="loads a pcap file into the database", type=str, default="")
+TRAKr.add_param("-loaddir", help="load a directory full of only pcap files", type=str, default="")
 TRAKr.add_param("-lat", help="latitude  - load or scan parameter", type=float, default=0)
 TRAKr.add_param("-long", help="longitude - load or scan parameter", type=float, default=0)
 
