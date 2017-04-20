@@ -20,20 +20,22 @@ create_reduced_db = "CREATE TABLE IF NOT EXISTS " + table_reduced + " \
                LONG            DOUBLE  NOT NULL);"
 create_unique_db = "CREATE TABLE IF NOT EXISTS " + table_unique + "\
                (ADDRESS   TEXT   PRIMARY KEY   NOT NULL," \
-                "TIME       INT                 NOT NULL);"
+                                                                  "TIME       INT                 NOT NULL);"
 create_usercount_db = "CREATE TABLE IF NOT EXISTS " + table_usercount + "" \
                                                                         "(TIME    LONG  NOT NULL," \
                                                                         "NUM_USERS    INT     NOT NULL)"
 # unique MACs
-get_all_macs_after = "SELECT ADDRESS FROM " + table_unique+" WHERE TIME >= %s"
+get_all_macs_after = "SELECT ADDRESS FROM " + table_unique + " WHERE TIME >= %s"
 insert_unique_command = "INSERT INTO " + table_unique + " (ADDRESS, TIME) VALUES ('%s', %s)"
-update_unique_command = "UPDATE "+table_unique+" SET TIME=%s WHERE ADDRESS=='%s' "
+update_unique_command = "UPDATE " + table_unique + " SET TIME=%s WHERE ADDRESS=='%s' "
 
 # reduced db commands
 insert_behavior = "INSERT INTO " + table_reduced + "(ADDRESS, TIME, TYPE, LAT, LONG) VALUES ('%s', %s, %s, %s, %s)"
 get_last_observation = "SELECT TYPE FROM (SELECT MAX(TIME), TYPE FROM " + table_reduced + " WHERE ADDRESS=='%s')"
 # getting al obs of the specified address, then sorting by their time
 get_all_action_for_address = "SELECT TYPE, TIME FROM (SELECT TYPE, TIME FROM " + table_reduced + " WHERE ADDRESS == '%s') ORDER BY TIME ASC"
+
+get_all_actions_sorted_by_time = "SELECT TYPE, TIME FROM "+table_reduced+" ORDER BY TIME ASC"
 
 
 def init():
@@ -91,14 +93,13 @@ def addNewAddress(connection, address, time=0):
         connection.commit()
         return True
     except Exception:
-        #maybe it was already in there, so lets try updating it instead
+        # maybe it was already in there, so lets try updating it instead
         try:
             connection.execute(update_unique_command % (time, address))
             return True
         except Exception:
             pass
     return False
-
 
 
 def getUniques(connection, startTime):
@@ -126,6 +127,15 @@ def getMostRecentStatus(connection, address):
 
 def getAllActionsForAddress(connection, address):
     cursor = connection.execute(get_all_action_for_address % address)
+    actions = []
+    for c in cursor:
+        # TYPE, TIME
+        actions += [(c[0], c[1])]
+    return actions
+
+
+def getAllActionsSortedbyTime(connection):
+    cursor = connection.execute(get_all_actions_sorted_by_time)
     actions = []
     for c in cursor:
         # TYPE, TIME
