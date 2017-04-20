@@ -1,51 +1,23 @@
-Raspberry Pi Installation
+How to run TRAKr
 
-thing you'll need:
+first we need a few things in order for TRAKr to start running
 
-	Raspberry Pi
-	Micro USB Power Supply for Pi
-	Micro SD Card
-		and a way to image the Micro SD Card
-	External WiFi Adapter 
-		with Monitor Mode Capabilities
-	
+We'll need tshark, the terminal verison of Wireshark to do packet capture.
 
-
-image it with something linux, I just did the default Raspbian - Jessie
-
-
-Install tshark
-	
+	sudo apt-get update
 	sudo apt-get install tshark
 
-Install Scapy and its dependency tcpdump
 
-	sudo apt-get install scapy
-	sudo apt-get install tcpdump
+Then, some python dependencies are needed. Pip is a package manager for python, and pyCLI is the command line interface TRAKr uses.
 
-Install some other things we need for Python
-
-	sudo apt-get -y install python-pip
+	sudo apt-get install python-pip
 	sudo pip install pyCLI
 
+Now you're all ready to run. If you want to do any wireless packet capture, it must be run as sudo like so:
 
-Put TRAKr in a directory
-cd into it
+	sudo python TRAKr.py -scan
 
-before you run it, you might want to tweak some of the settings in the
-trakr.ini file. Most importantly, the wireless interface. There's a
-good chance that your wifi module is wlan1 instead of the default en0
+Or any other operations can be done as a standard user
 
-Run TRAKr
-
-	This will do everything for you all in one command:
-	Scan, analysze, save to database.
-
-	sudo python TRAKr.py -run
-
-Get your juicy analytics:
-
-	A second instance of TRAKr may be run if one is already scanning.
-	This second isntance will interface with the database and get
-	your metrics from it. Most of its output will save as a .csv file
-	which is compatible with most spreadsheet programs like Excel
+	python TRAKr.py -load /path/to/file.pcap
+	
