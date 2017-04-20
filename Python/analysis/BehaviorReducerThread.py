@@ -28,9 +28,10 @@ def analyze():
     total = len(uniques)
     print "num uniques: " + str(total)
     for address in uniques:
+        count += 1
         print '{0}\r'.format("  analysis: " + str(100 * count / total) + "%"),
 
-        count += 1
+
         observationsOfAddress = RollingDatabaseHelper.getObservationsOfAddress(rollingDBConnection, address)
 
         makeEntriesAndExitsForAddress(address, observationsOfAddress, behaviorDBConnection, rollingDBConnection)
