@@ -9,7 +9,7 @@ from database import DatabaseInit
 from management import ThreadKeeper
 from scanner import Scanner
 from analysis import BehaviorReducer
-
+from file.export import Exporter
 
 # this is what runs when the command line application is invoked
 @cli.app.CommandLineApp
@@ -24,12 +24,14 @@ def TRAKr(app):
 
     # exporting databases
     if TRAKr.params.export:
-        DatabaseExporter.exportDatabases()
+        __exportData()
 
     # deleting databases
     elif TRAKr.params.deleteDB:
         __deleteDBs()
         __initDBs()
+
+
 
     # handling run-oriented parameters
     # these are the ones that can go infinitely like scans
@@ -81,6 +83,10 @@ def __analyze():
     BehaviorReducer.beginAnalysis()
     return
 
+def __exportData():
+    print("Exporting data...")
+    Exporter.export()
+    return
 
 # all-in-one solution for doing everything
 def __run():
@@ -127,7 +133,7 @@ TRAKr.add_param("-run", help="this starts capture and analysis processing all-in
                 action='store_true')
 TRAKr.add_param("-scan", help="begin scanning and saving to the database", action='store_true')
 TRAKr.add_param("-reset", help="resets the config file to defaul", action='store_true')
-TRAKr.add_param("-export", help="export the rolling.db, reduced.db, and graph.db into the /export dir",
+TRAKr.add_param("-export", help="export the processed data to a CSV",
                 action='store_true', default=False)
 TRAKr.add_param("-deleteDB", help="delete all databases and create new ones.", action='store_true',
                 default=False)
