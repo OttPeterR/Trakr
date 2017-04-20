@@ -35,19 +35,9 @@ def analyze():
 
         makeEntriesAndExitsForAddress(address, observationsOfAddress, behaviorDBConnection, rollingDBConnection)
 
-        # now that entries and exits have been made for this address
-        # parse through each one and find if they were present during
-        # the interval specified by the config
-
-        # getting all actions for this address (there could be other ones in
-        # the DB that were not in this capture)
         actions = BehaviorDatabaseHelper.getAllActionsForAddress(behaviorDBConnection, address)
 
-        # if len(actions) > 1:
-        #    for action in actions:
-        #        # each action is a tuple of (TYPE, TIME)
-        #        continue
-
+    # make a new line to advance from the percentage print output
     print
 
     # commit changes to behavior db and close out both connections
