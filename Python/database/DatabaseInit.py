@@ -24,7 +24,7 @@ def deleteDBs():
 
 def __initDB(path):
     call(["touch", path])
-    call(["chmod", "777", path])
+    call(["chmod", "644", path])
     connection = sqlite3.connect(path)
     connection.close()
 
