@@ -14,7 +14,8 @@ def analyze():
 
     # current GMT minus the backtracking time (in seconds)
 
-    startTime = int(time.time()) - int(ConfigHelper.getCaptureDuration())#int(ConfigHelper.getNumBackTrackHours() * 3600)
+    startTime = int(time.time()) - int(
+        ConfigHelper.getCaptureDuration())  # int(ConfigHelper.getNumBackTrackHours() * 3600)
     # or if we want to analyze everything we've ever captured
     if ConfigHelper.doAllAnalysisForever():
         startTime = 0
@@ -22,10 +23,13 @@ def analyze():
     uniques = BehaviorDatabaseHelper.getUniques(behaviorDBConnection, startTime)
     timeSlots = makeTimeSlots()
 
-    print "num uniques: "+str(len(uniques))
+
     count = 0
     total = len(uniques)
+    print "num uniques: " + str(total)
     for address in uniques:
+        print '{0}\r'.format("  analysis: " + str(100 * count / total) + "%"),
+
         count += 1
         observationsOfAddress = RollingDatabaseHelper.getObservationsOfAddress(rollingDBConnection, address)
 
@@ -39,12 +43,11 @@ def analyze():
         # the DB that were not in this capture)
         actions = BehaviorDatabaseHelper.getAllActionsForAddress(behaviorDBConnection, address)
 
-        #if len(actions) > 1:
+        # if len(actions) > 1:
         #    for action in actions:
         #        # each action is a tuple of (TYPE, TIME)
         #        continue
 
-        print '{0}\r'.format("  analysis: " + str(100 * count / total) + "%"),
     print
 
     # commit changes to behavior db and close out both connections
@@ -59,27 +62,36 @@ def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
 
     observation_actions = []  # this will hold the entry/exit actions
 
-    if len(observations) > 1:
+    if len(observations) > 0:
 
-        previous_state = __loadState(behaviorDB, address)
-        #print "new device:"
-        for o in range(1, len(observations)):
-            dist = observations[o].time - observations[o - 1].time
+        # if there was a previous observation, let's find it
+        lastKnown = __loadLastKnownState(behaviorDB, address)
+        if lastKnown is not None:
+            observations.insert(0, lastKnown)
 
-            # find what the state is of the current observation, based on the previous
+        # if only a single observation was found, handle that
+        if len(observations) == 1:
+            observation_actions += [(action_exit, observations[0].time)]
 
-            # how long has it been since last seeing this device?
-            if dist > ConfigHelper.getExitTime():
-                observation_actions += [(action_exit, observations[o - 1].time)]
-                #print "exit: " + str(observations[o - 1].time)
+        else:
+            time_difference = 0
+            for o in range(1, len(observations)):
+                time_difference = observations[o].time - observations[o - 1].time
 
-                observation_actions += [(action_notice, observations[o].time)]
-                #print "enter: " + str(observations[o].time)
+                # find what the state is of the current observation, based on the previous
 
+                # Did the device leave since we last saw it?
+                if time_difference > ConfigHelper.getExitTime():
+                    observation_actions += [(action_exit, observations[o - 1].time)]
+                    # print "exit: " + str(observations[o - 1].time)
 
-    elif len(observations) == 1:
-        # there is only one observation, just handle it as a notice
-        observation_actions += [(action_notice, observations[0].time)]
+                    observation_actions += [(action_notice, observations[o].time)]
+                    # print "enter: " + str(observations[o].time)
+                    # else, its just another observation, we don't care too much about it
+                    # else:
+
+            # mark the last time we see it as a leave
+            observation_actions += [(action_exit, observations[len(observations)-1].time)]
     else:
         # no observations --> nothing to do, move along
         return
@@ -91,6 +103,7 @@ def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
                                            actions[1])  # can add lat/long here if you want
 
 
+
 def makeTimeSlots():
     # returns an array of the size of time slots that should be created
     slotsPerHour = ConfigHelper.getHourSegments()
@@ -98,5 +111,5 @@ def makeTimeSlots():
     return [0] * slotsPerHour * backTrackHours
 
 
-def __loadState(connection, addr):
+def __loadLastKnownState(connection, addr):
     return BehaviorDatabaseHelper.getMostRecentStatus(connection, addr)
