@@ -4,7 +4,7 @@ import ReducedDataProcessorThread
 
 def __export():
     ThreadKeeper.incrementThreadCount()
-    ReducedDataProcessorThread.analyze()
+    ReducedDataProcessorThread.export()
     ThreadKeeper.decrementThreadCount()
 
 def beginExport():
