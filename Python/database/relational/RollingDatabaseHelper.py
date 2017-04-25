@@ -9,7 +9,7 @@ rolling_table_creation = "CREATE TABLE IF NOT EXISTS " + table + " \
            TIME            LONG  NOT NULL, \
            LAT             DOUBLE  NOT NULL, \
            LONG            DOUBLE  NOT NULL);"
-get_observations_of_address = "SELECT * FROM " + table + " WHERE ADDRESS==\"%s\""
+get_observations_of_address = "SELECT TIME FROM " + table + " WHERE ADDRESS==\"%s\""
 get_observations_between_times = "SELECT * FROM " + table + " WHERE TIME>=%s AND TIME<=%s"
 insert_command = "INSERT INTO " + table + " (ADDRESS, TIME, LAT, LONG) VALUES ('%s', %s, %s, %s)"
 remove_bad_packets = "DELETE FROM " + table + " WHERE ADDRESS == '%s'"
@@ -59,10 +59,15 @@ def __rollingDatabaseInit(connection):
     connection.commit()
 
 
-def getObservationsOfAddress(connection, address):
+def getTimesOfAddress(connection, address):
     cursor = connection.execute(get_observations_of_address % address)
     obs = []
+    last = 0
     for c in cursor:
-        obs.append(Observation.Observation(int(c[1]), c[0], int(c[2]), int(c[3])))
-
+        # adding values that are not the same as the previous;y added one
+        # this cuts down on duplicate observations in the same second
+        val = int(c[0])
+        if val != last:
+            obs.append(val)
+        last = val
     return obs
