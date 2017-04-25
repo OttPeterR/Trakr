@@ -5,7 +5,7 @@ from config import ConfigHelper
 # this class will parse through a sorted list of all observations and create a large array of data to be written to output
 # puts data into usercount table of behaviorDB
 
-def export():
+def makeExportData():
     # this is a 2d array of the rows to be exported
     csv_data = []
 
@@ -31,10 +31,10 @@ def export():
 
             # each time stamp will be the start time
             # and the next observation will be when it ends
-            csv_data += [time_end,
+            csv_data += [(time_end,
                          current_entries,
                          current_exits,
-                         last_population]
+                         last_population)]
 
             # reset counters
             time_end = action.time + time_bracket
@@ -43,7 +43,7 @@ def export():
             current_exits = 0
 
         # is it an entry?
-        if action.type == 1:
+        if action.action == 1:
             current_entries += 1
         # else, it's an exit:
         else:
