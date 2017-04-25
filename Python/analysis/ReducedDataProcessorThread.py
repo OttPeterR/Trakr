@@ -20,25 +20,24 @@ def makeExportData():
     time_end = -1
     current_entries = 0
     current_exits = 0
-    last_population = 0
+    current_population = 0
 
     for action in all_actions:
         # this is guaranteed to hit on the first packet
         # check if a new bracket needs to be created
         if action.time > time_end:
-            # update the time
-
+            # update
+            current_population = current_population + current_entries - current_exits
 
             # each time stamp will be the start time
             # and the next observation will be when it ends
             csv_data += [(time_end,
                           current_entries,
                           current_exits,
-                          last_population)]
+                          current_population)]
 
             # reset counters
             time_end = action.time + time_bracket
-            last_population = last_population + current_entries - current_exits
             current_entries = 0
             current_exits = 0
 

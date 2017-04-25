@@ -37,7 +37,7 @@ get_last_observation = "SELECT TYPE FROM (SELECT MAX(TIME), TYPE FROM " + table_
 get_all_action_for_address = "SELECT TYPE, TIME FROM (SELECT TYPE, TIME FROM " + table_reduced + " WHERE ADDRESS == '%s') ORDER BY TIME ASC"
 
 get_all_actions_sorted_by_time = "SELECT TYPE, TIME FROM " + table_reduced + " ORDER BY TIME ASC"
-
+remove_false_exit = "DELETE FROM "+table_reduced+" WHERE ADDRESS=='%s' AND TIME==%s"
 
 def init():
     conn = connect()
@@ -142,6 +142,9 @@ def getAllActionsSortedbyTime(connection):
         # TYPE, TIME
         actions += [SimpleAction(c[1], c[0])]
     return actions
+
+def removeFalseExit(connection, address, time):
+    connection.execute(remove_false_exit % (address, time))
 
 
 class SimpleAction:

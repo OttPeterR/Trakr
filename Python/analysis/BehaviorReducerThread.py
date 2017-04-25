@@ -56,27 +56,31 @@ def makeEntriesAndExitsForAddress(address, times, behaviorDB):
         lastKnown = __loadLastKnownState(behaviorDB, address)
         if lastKnown is not None:
             previous = lastKnown
+            # if the last observation was a leave and it should be, this'll fix it
+            __fixPreviousAction(behaviorDB, address, previous, times[0])
 
-        if True:
-            time_difference = 0
-            for cur_time in times:
-                time_difference = cur_time - previous
+        time_difference = 0
+        for cur_time in times:
+            time_difference = cur_time - previous
 
-                # find what the state is of the current observation, based on the previous
+            # find what the state is of the current observation, based on the previous
 
-                # Did the device leave since we last saw it?
-                if time_difference > ConfigHelper.getExitTime():
-                    # so the previous one was an exit
-                    if(previous != -1):
-                        observation_actions += [(action_exit, previous)]
+            # Did the device leave since we last saw it?
+            if time_difference > ConfigHelper.getExitTime():
+                # so the previous one was an exit
+                if (previous != -1):
+                    observation_actions += [(action_exit, previous)]
 
-                    # and it was just seen entering
-                    observation_actions += [(action_notice, cur_time)]
+                # and it was just seen entering
+                observation_actions += [(action_notice, cur_time)]
 
-                    # else, its just another observation, we don't care too much about it
+                # else, its just another observation, we don't care too much about it
 
-                # update previous
-                previous = cur_time
+            # update previous
+            previous = cur_time
+
+        # make the last observation a leave, it'll get updated if it actually isn't
+        observation_actions += [(action_exit, previous)]
 
     else:
         # no observations --> nothing to do, move along
@@ -98,3 +102,10 @@ def makeTimeSlots():
 
 def __loadLastKnownState(connection, addr):
     return BehaviorDatabaseHelper.getMostRecentStatus(connection, addr)
+
+
+def __fixPreviousAction(connection, address, previousTime, newTime):
+    # should it be removed?
+    if newTime - previousTime < ConfigHelper.getExitTime():
+        BehaviorDatabaseHelper.removeFalseExit(connection, address, previousTime)
+        pass
