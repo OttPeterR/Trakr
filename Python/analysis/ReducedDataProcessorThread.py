@@ -32,9 +32,9 @@ def makeExportData():
             # each time stamp will be the start time
             # and the next observation will be when it ends
             csv_data += [(time_end,
-                         current_entries,
-                         current_exits,
-                         last_population)]
+                          current_entries,
+                          current_exits,
+                          last_population)]
 
             # reset counters
             time_end = action.time + time_bracket
