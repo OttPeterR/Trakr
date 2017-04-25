@@ -20,8 +20,3 @@ class Observation:
         self.mac = mac
         self.lat = lat
         self.long = long
-
-def makeObservation(time, address, lat, long):
-    return Observation(time,
-                       address,
-                       lat, long)

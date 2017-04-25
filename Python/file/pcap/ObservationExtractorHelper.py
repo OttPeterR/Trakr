@@ -84,7 +84,7 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
     count = 0
     for packet in packets:
         # packet is a tuple of (time, address)
-        observations[count] = Observation.makeObservation(packet[0], packet[1], latitude, longitude)
+        observations[count] = Observation(packet[0], packet[1], latitude, longitude)
         count = count + 1
         print '{0}\r'.format("  processing: " + str(100 * count / total) + "%\n"),
     print
