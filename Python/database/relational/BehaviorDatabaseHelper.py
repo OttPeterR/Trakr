@@ -1,3 +1,4 @@
+import new
 import sqlite3
 
 from config import ConfigHelper
@@ -35,7 +36,7 @@ get_last_observation = "SELECT TYPE FROM (SELECT MAX(TIME), TYPE FROM " + table_
 # getting al obs of the specified address, then sorting by their time
 get_all_action_for_address = "SELECT TYPE, TIME FROM (SELECT TYPE, TIME FROM " + table_reduced + " WHERE ADDRESS == '%s') ORDER BY TIME ASC"
 
-get_all_actions_sorted_by_time = "SELECT TYPE, TIME FROM "+table_reduced+" ORDER BY TIME ASC"
+get_all_actions_sorted_by_time = "SELECT TYPE, TIME FROM " + table_reduced + " ORDER BY TIME ASC"
 
 
 def init():
@@ -130,7 +131,7 @@ def getAllActionsForAddress(connection, address):
     actions = []
     for c in cursor:
         # TYPE, TIME
-        actions += [(c[0], c[1])]
+        actions += [SimpleAction(c[1], c[0])]
     return actions
 
 
@@ -139,5 +140,14 @@ def getAllActionsSortedbyTime(connection):
     actions = []
     for c in cursor:
         # TYPE, TIME
-        actions += [(c[0], c[1])]
+        actions += [SimpleAction(c[1], c[0])]
     return actions
+
+
+class SimpleAction:
+    time = -1
+    action = -1
+
+    def __init__(self, time, action):
+        self.time = time
+        self.action = action
