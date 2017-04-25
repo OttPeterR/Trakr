@@ -2,6 +2,7 @@ import time
 from database.relational import RollingDatabaseHelper
 from database.relational import BehaviorDatabaseHelper
 from config import ConfigHelper
+from database.relational.BehaviorDatabaseHelper import SimpleAction
 
 
 def analyze():
@@ -21,22 +22,17 @@ def analyze():
         startTime = 0
 
     uniques = BehaviorDatabaseHelper.getUniques(behaviorDBConnection, startTime)
-    timeSlots = makeTimeSlots()
-
 
     count = 0
     total = len(uniques)
-    print "num uniques: " + str(total)
     for address in uniques:
         count += 1
         print '{0}\r'.format("  analysis: " + str(100 * count / total) + "%"),
 
+        # array of int
+        timesOfAddress = RollingDatabaseHelper.getTimesOfAddress(rollingDBConnection, address)
 
-        observationsOfAddress = RollingDatabaseHelper.getObservationsOfAddress(rollingDBConnection, address)
-
-        makeEntriesAndExitsForAddress(address, observationsOfAddress, behaviorDBConnection, rollingDBConnection)
-
-        actions = BehaviorDatabaseHelper.getAllActionsForAddress(behaviorDBConnection, address)
+        makeEntriesAndExitsForAddress(address, timesOfAddress, behaviorDBConnection)
 
     # make a new line to advance from the percentage print output
     print
@@ -48,41 +44,40 @@ def analyze():
     return
 
 
-def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
+def makeEntriesAndExitsForAddress(address, times, behaviorDB):
     global action_exit, action_notice
 
     observation_actions = []  # this will hold the entry/exit actions
 
-    if len(observations) > 0:
+    if len(times) > 0:
 
         # if there was a previous observation, let's find it
+        previous = -1
         lastKnown = __loadLastKnownState(behaviorDB, address)
         if lastKnown is not None:
-            observations.insert(0, lastKnown)
+            previous = lastKnown
 
-        # if only a single observation was found, handle that
-        if len(observations) == 1:
-            observation_actions += [(action_exit, observations[0].time)]
-
-        else:
+        if True:
             time_difference = 0
-            for o in range(1, len(observations)):
-                time_difference = observations[o].time - observations[o - 1].time
+            for cur_time in times:
+                time_difference = cur_time - previous
 
                 # find what the state is of the current observation, based on the previous
 
                 # Did the device leave since we last saw it?
                 if time_difference > ConfigHelper.getExitTime():
-                    observation_actions += [(action_exit, observations[o - 1].time)]
-                    # print "exit: " + str(observations[o - 1].time)
+                    # so the previous one was an exit
+                    if(previous != -1):
+                        observation_actions += [(action_exit, previous)]
 
-                    observation_actions += [(action_notice, observations[o].time)]
-                    # print "enter: " + str(observations[o].time)
+                    # and it was just seen entering
+                    observation_actions += [(action_notice, cur_time)]
+
                     # else, its just another observation, we don't care too much about it
-                    # else:
 
-            # mark the last time we see it as a leave
-            observation_actions += [(action_exit, observations[len(observations)-1].time)]
+                # update previous
+                previous = cur_time
+
     else:
         # no observations --> nothing to do, move along
         return
@@ -92,7 +87,6 @@ def makeEntriesAndExitsForAddress(address, observations, behaviorDB, rollingDB):
         # actions is a tuple
         BehaviorDatabaseHelper.addBehavior(behaviorDB, address, actions[0],
                                            actions[1])  # can add lat/long here if you want
-
 
 
 def makeTimeSlots():
