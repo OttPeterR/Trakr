@@ -12,21 +12,25 @@ def makeExportData():
     conn = BehaviorDatabaseHelper.connect()
     all_actions = BehaviorDatabaseHelper.getAllActionsSortedbyTime(conn)
 
-    index = 0
-    leng = len(all_actions)
-
     # number of seconds for each span of observation
-    time_bracket = 3600.0 / ConfigHelper.getHourSegments()
-    time_end = -1
+    time_bracket = 3600 / ConfigHelper.getHourSegments()
+    time_end = all_actions[0].time
     current_entries = 0
     current_exits = 0
     current_population = 0
+    current_addresses = []  # make me a dictionary of (address, time)
+    # each time will be an entry time and when called it will be called
+    # with the action that is the corresponding exit
+    # from there a timespan can be calculated and decided if it should be kept
+    # or not, use config: entry_time
+
 
     for action in all_actions:
         # this is guaranteed to hit on the first packet
         # check if a new bracket needs to be created
         if action.time > time_end:
             # update
+
             current_population = current_population + current_entries - current_exits
 
             # each time stamp will be the start time
@@ -37,17 +41,17 @@ def makeExportData():
                           current_population)]
 
             # reset counters
-            time_end = action.time + time_bracket
+            time_end = time_end + time_bracket
             current_entries = 0
             current_exits = 0
 
-        # is it an entry?
+        # entry
         if action.action == 1:
             current_entries += 1
-        # else, it's an exit:
+           # current_addresses += [(action.address, action.time)]
+        # exit
         else:
             current_exits += 1
+#            current_addresses.remove(action.address)
 
-        index += 1
-
-    return csv_data
+    return csv_data[1:]

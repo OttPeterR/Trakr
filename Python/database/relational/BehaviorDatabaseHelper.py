@@ -36,8 +36,9 @@ get_last_observation = "SELECT TYPE FROM (SELECT MAX(TIME), TYPE FROM " + table_
 # getting al obs of the specified address, then sorting by their time
 get_all_action_for_address = "SELECT TYPE, TIME FROM (SELECT TYPE, TIME FROM " + table_reduced + " WHERE ADDRESS == '%s') ORDER BY TIME ASC"
 
-get_all_actions_sorted_by_time = "SELECT TYPE, TIME FROM " + table_reduced + " ORDER BY TIME ASC"
-remove_false_exit = "DELETE FROM "+table_reduced+" WHERE ADDRESS=='%s' AND TIME==%s"
+get_all_actions_sorted_by_time = "SELECT TYPE, TIME, ADDRESS FROM " + table_reduced + " ORDER BY TIME ASC"
+remove_false_exit = "DELETE FROM " + table_reduced + " WHERE ADDRESS=='%s' AND TIME==%s"
+
 
 def init():
     conn = connect()
@@ -130,8 +131,8 @@ def getAllActionsForAddress(connection, address):
     cursor = connection.execute(get_all_action_for_address % address)
     actions = []
     for c in cursor:
-        # TYPE, TIME
-        actions += [SimpleAction(c[1], c[0])]
+        # ACTION, TIME, ADDRESS
+        actions += [SimpleAction(c[0], c[1], c[2])]
     return actions
 
 
@@ -139,9 +140,10 @@ def getAllActionsSortedbyTime(connection):
     cursor = connection.execute(get_all_actions_sorted_by_time)
     actions = []
     for c in cursor:
-        # TYPE, TIME
-        actions += [SimpleAction(c[1], c[0])]
+        # ACTION, TIME, ADDRESS
+        actions += [SimpleAction(c[0], c[1], c[2])]
     return actions
+
 
 def removeFalseExit(connection, address, time):
     connection.execute(remove_false_exit % (address, time))
@@ -150,7 +152,9 @@ def removeFalseExit(connection, address, time):
 class SimpleAction:
     time = -1
     action = -1
+    address = -1
 
-    def __init__(self, time, action):
+    def __init__(self, action, time, address):
         self.time = time
         self.action = action
+        self.address = address
