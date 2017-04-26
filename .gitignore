@@ -24,3 +24,5 @@ Python/config/trakr.ini
 *.db-journal
 
 *.txt
+
+*.csv
