@@ -4,6 +4,6 @@
 # put that array into a file via CSVWriter
 from analysis import ReducedDataProcessor
 
-def export():
-    ReducedDataProcessor.beginExport()
+def export(filename):
+    ReducedDataProcessor.beginExport(filename)
 

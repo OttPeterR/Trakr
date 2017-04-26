@@ -1,15 +1,17 @@
 import thread
 from management import ThreadKeeper
 import ReducedDataProcessorThread
+from file.export import CSVWriter
 
-def __export():
+def __export(filepath):
     ThreadKeeper.incrementThreadCount()
-    ReducedDataProcessorThread.makeExportData()
+    data = ReducedDataProcessorThread.makeExportData()
+    CSVWriter.export(filepath, data)
     ThreadKeeper.decrementThreadCount()
 
-def beginExport():
+def beginExport(filepath):
     try:
-        thread.start_new_thread(__export, ())
+        thread.start_new_thread(__export, (filepath,))
     except Exception, errmsg:
         print "Export failed to start:"
         print errmsg

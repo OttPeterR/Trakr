@@ -83,9 +83,9 @@ def __analyze():
     BehaviorReducer.beginAnalysis()
     return
 
-def __exportData():
+def __exportData(filename="trakr_export.csv"):
     print("Exporting data...")
-    Exporter.export()
+    Exporter.export(filename)
     return
 
 # all-in-one solution for doing everything
