@@ -158,3 +158,9 @@ class SimpleAction:
         self.time = time
         self.action = action
         self.address = address
+
+    def __eq__(self, other):
+        return self.address==other.address and self.time==other.time and self.action==other.action
+
+    def __cmp__(self, other):
+        return other.time - self.time
