@@ -20,7 +20,7 @@ def makeExportData():
     current_exits = 0
     current_population = 0
 
-    filtered_actions = all_actions#__filterActions(all_actions)
+    filtered_actions = all_actions  # __filterActions(all_actions)
 
     for action in filtered_actions:
         # this is guaranteed to hit on the first packet
