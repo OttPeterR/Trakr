@@ -34,11 +34,11 @@ def close(connection):
     connection.close()
 
 
-def loadPacket(connection, o):
+def loadPacket(connection, packet):
     # the type of packet is Observation
 
-    addr = PrivacyUtility.processAddress(o.mac)
-    connection.execute(insert_command % (addr, str(o.time), str(o.lat), str(o.long)))
+    addr = PrivacyUtility.processAddress(packet.mac)
+    connection.execute(insert_command % (addr, str(packet.time), str(packet.lat), str(packet.long)))
     return True
 
 

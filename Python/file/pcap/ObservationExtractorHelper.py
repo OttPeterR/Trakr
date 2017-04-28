@@ -1,4 +1,4 @@
-import Observation
+from file.pcap.Observation import Observation
 from subprocess import call
 from management import ThreadKeeper
 from config.ConfigHelper import getCaptureDirectory, getCaptureDuration, getKeepAllPcaps
@@ -48,7 +48,7 @@ def __extractToFile(filePath, outputFilePath):
         print "Error with creating temp file:"
         print errmsg
         return False
-    return outFile
+    return True
 
 
 def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePath):
@@ -66,7 +66,7 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
                 addr, time = line.split(separator)
                 packets += [(time, addr)]
                 count = count + 1
-                print '{0}\r'.format("  values: " + str(count)),
+                print '{0}\r'.format("  values:     " + str(count)),
     print
 
     # cleaning up temp file
@@ -79,14 +79,17 @@ def __processTempFile(filePath, latitude, longitude, allowDeletion, outputFilePa
     # making these into ints just to be sure
     latitude, longitude = __fixLatLong(latitude, longitude)
 
-    observations = [Observation] * count
+    observations = []
     total = count
     count = 0
+
+    obs=None
     for packet in packets:
         # packet is a tuple of (time, address)
-        observations[count] = Observation(packet[0], packet[1], latitude, longitude)
+        obs = Observation(packet[0], packet[1], latitude, longitude)
+        observations += [obs]
         count = count + 1
-        print '{0}\r'.format("  processing: " + str(100 * count / total) + "%\n"),
+        print '{0}\r'.format("  processing: " + str(100 * count / total) + "%"),
     print
     return observations
 

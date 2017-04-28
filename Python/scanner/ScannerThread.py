@@ -11,7 +11,7 @@ def scanLoop(loadToDabatase, lat=0, long=0, analyze=False):
     while True:
         pcapPath = scan()
         if loadToDabatase:
-            Extractor.ExtractFromFile(pcapPath, lat, long)
+            Extractor.extractFromFile(pcapPath, lat, long)
         if analyze:
             BehaviorReducer.beginAnalysis()
 
