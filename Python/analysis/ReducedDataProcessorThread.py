@@ -5,6 +5,7 @@ from config import ConfigHelper
 
 # this class will parse through a sorted list of all observations and create a large array of data to be written to output
 # puts data into usercount table of behaviorDB
+# basically its looking at all the entry and exit times to see how many devices are currently present
 
 def makeExportData():
     # this is a 2d array of the rows to be exported

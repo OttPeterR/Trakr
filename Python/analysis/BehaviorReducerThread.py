@@ -2,8 +2,10 @@ import time
 from database.relational import RollingDatabaseHelper
 from database.relational import BehaviorDatabaseHelper
 from config import ConfigHelper
-from database.relational.BehaviorDatabaseHelper import SimpleAction
 
+
+# this class parses over all the data taken direcly from the pcap files
+# it iterates on addresses and creates the entry and exit actions
 
 def analyze():
     global action_exit, action_notice
